@@ -1,0 +1,1 @@
+Funciones y macros de propósito general, enfocadas a desarrollo de aplicaciones embebidas en microcontroladores de 8 bits

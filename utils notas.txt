@@ -1,0 +1,15 @@
+14-05-2018
+Se cambi� macro de divisi�n entera por funci�n, funciona bien con librer�as 
+i2c y serial
+19-08-2018
+Se incorporaron funciones de validaci�n de caracteres, as� como funci�n CRC16 en sus variantes de tabla precalculada y algoritmo completo.
+28-12-2018
+Las macros testbit, clrbit, setbit y togglebit para variables de 32 bits no funcionaban correctamente. Se agregaron las macros testbit32, clrbit32, setbit32 y togglebit32 en consecuencia. Se agreg� un 1UL para indicar al compilador la utilizaci�n de una variable de 32 bits.
+24-02-2019
+Se modific� la macro testbit32 y testbit para que devuelvan efectivamente true o false. Probado en proyecto MIDI Piano Christmas.
+21-10-2019
+Se agregaron las macros de inversi�n de bits para variables enteras de 8, 16 y 32 bits. Se quitaron las funciones de CRC para implementarse en mun m�dulo independiente.
+16-06-2020
+Cambiado nombre a utils
+18-06-2020
+Agregada macro swap
