@@ -1,1 +1,1 @@
-Funciones y macros de propósito general, enfocadas a desarrollo de aplicaciones embebidas en microcontroladores de 8 bits
+Funciones y macros de propósito general, enfocadas a desarrollo de aplicaciones embebidas específicamente para microcontroladores PIC de 8 bits, pudiendo ser adaptadas a otros microcontroladores según se necesite.

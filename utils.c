@@ -250,8 +250,7 @@ void set_timeOut_ms(uint16_t timeout_ms) {
  * @param (void) 
  * @return (uint32_t) Timeout en nanosegundos transcurrido. 
 */
-uint32_t get_ellapsedTime_ns()
-{
+uint32_t get_ellapsedTime_ns() {
     uint8_t tmr0l = TMR0L;		//Lectura de byte bajo para actualizar buffer de TMR0H 
     return ( make16(TMR0H,tmr0l) - precarga_timer0 ) * 256UL * TCY_ns; //Cálculo de tiempo de espera transcurrido en [ns]  
 }
@@ -262,8 +261,7 @@ uint32_t get_ellapsedTime_ns()
  * @param (void) 
  * @return (float) Timeout en microsegundos transcurrido. 
 */
-float get_ellapsedTime_us()
-{
+float get_ellapsedTime_us() {
     return ((float)(get_ellapsedTime_ns()))/1000.0F;            //Cálculo de tiempo de espera transcurrido en [us]
 }
 
@@ -273,8 +271,7 @@ float get_ellapsedTime_us()
  * @param (void) 
  * @return (float) Timeout en milisegundos transcurrido. 
 */
-float get_ellapsedTime_ms()
-{
+float get_ellapsedTime_ms() {
     return ((float)(get_ellapsedTime_ns()))/1000000.0F;         //Cálculo de tiempo de espera transcurrido en [ms]
 }
 
