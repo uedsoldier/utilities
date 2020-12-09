@@ -180,6 +180,11 @@
 */
 
 /**
+ * @brief Macro para restricción de valores a límites inferior y superior (constrain)
+ */
+#define constrain(x,inf,sup) ((x > sup)? sup:((x < inf)? inf: x ))
+
+/**
  * @brief Definición de tipo de estructura de datos para manejo de aritmética de punto fijo, con partes enteras y fraccionarias
 */
 typedef struct whole_frac_t {
@@ -220,7 +225,7 @@ uint8_t bin2bcd(uint8_t dato_bin);				// Dato binario a BCD (Binary Coded Decima
 uint8_t bcd2bin(uint8_t dato_bcd);				// Dato BCD (Binary Coded Decimal) a binario
 
 //Operaciones matemáticas
-
+int16_t map(int16_t x, int16_t x0, int16_t x1, int16_t y0, int16_t y1)
 uint32_t division_entera_sin_signo(uint32_t dividendo, uint32_t divisor);	// División de enteros sin truncamiento
 
 // Aritmética de punto fijo

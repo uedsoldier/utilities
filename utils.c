@@ -144,6 +144,20 @@ uint8_t bcd2bin(uint8_t dato_bcd) {
 }
 
 /**
+ * @brief Función para mapeo de valores enteros de un dominio al otro en interpolación lineal.
+ * @param x (int16_t): Valor a interpolar en el otro dominio
+ * @param x0 (int16_t): Valor inferior del dominio inicial
+ * @param x1 (int16_t): Valor superior del sominio inicial
+ * @param y0 (int16_t): Valor inferior del dominio final 
+ * @param y1 (int16_t): Valor superior del dominio final
+ * @return (in16_t) Valor correspondiente interpolado
+ */
+int16_t map(int16_t x, int16_t x0, int16_t x1, int16_t y0, int16_t y1){
+    return (x-x0) * ( (y1-y0)/(x1-x0) ) + y0;
+} 
+
+
+/**
  * @brief Función para realización de división de enteros de 32 bits sin signo. Muy útil en cálculos para registros, ya que no realiza truncamiento sino redondeo al entero más cercano
  * @param (uint32_t) Dividendo 
  * @param (uint32_t) Divisor
