@@ -245,13 +245,30 @@ int16_t string_indexOf( const char *cadena_a_buscar, const char *cadena_principa
 
 /**
  * @brief Función que calcula valor de precarga de timer0 para generar un timeout vía la bandera de interrupción por desborde (TMR0IF).
- * El usuario deberá configurar al timer 0 y después habilitar manualmente el timer0 (T0CONbits.TMR0ON = 1), para dar mayor exactitud a la temporización.
+ * El usuario deberá configurar previamente al timer 0 (preescala, fuente de reloj y modo de 16 bits) y después habilitar manualmente el timer0 (T0CONbits.TMR0ON = 1),
+ * para dar mayor exactitud a la temporización.
  * @param timeout_ms: (timeout_ms) Timeout en milisegundos requerido 
  * @return (void) 
 */
 void set_timeOut_ms(uint16_t timeout_ms) {
     TMR0ON = 0;     // Si el timer está activado, desactívalo
     timeout_ns = ((uint32_t)(timeout_ms)) * 1000000UL;
+    precarga_timer0 = (uint16_t)(65536UL - (uint16_t)(division_entera_sin_signo(timeout_ns, 256UL * TCY_ns )));     //Cálculo de precarga para timer 0
+    TMR0H = make8(precarga_timer0,1);
+	TMR0L = make8(precarga_timer0,0);
+    TMR0IF = 0;     //Limpia bandera de interrupción por desborde de timer 0
+}
+
+/**
+ * @brief Función que calcula valor de precarga de timer0 para generar un timeout vía la bandera de interrupción por desborde (TMR0IF).
+ * El usuario deberá configurar previamente al timer 0 (preescala, fuente de reloj y modo de 16 bits) y después habilitar manualmente el timer0 (T0CONbits.TMR0ON = 1),
+ * para dar mayor exactitud a la temporización.
+ * @param timeout_us: (timeout_us) Timeout en microsegundos requerido 
+ * @return (void) 
+*/
+void set_timeOut_us(uint16_t timeout_us){
+    TMR0ON = 0;     // Si el timer está activado, desactívalo
+    timeout_ns = ((uint32_t)(timeout_us)) * 1000UL;
     precarga_timer0 = (uint16_t)(65536UL - (uint16_t)(division_entera_sin_signo(timeout_ns, 256UL * TCY_ns )));     //Cálculo de precarga para timer 0
     TMR0H = make8(precarga_timer0,1);
 	TMR0L = make8(precarga_timer0,0);

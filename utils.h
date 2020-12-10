@@ -225,7 +225,7 @@ uint8_t bin2bcd(uint8_t dato_bin);				// Dato binario a BCD (Binary Coded Decima
 uint8_t bcd2bin(uint8_t dato_bcd);				// Dato BCD (Binary Coded Decimal) a binario
 
 //Operaciones matemáticas
-int16_t map(int16_t x, int16_t x0, int16_t x1, int16_t y0, int16_t y1)
+int16_t map(int16_t x, int16_t x0, int16_t x1, int16_t y0, int16_t y1);	//Mapeo de valores de un dominio a otro 
 uint32_t division_entera_sin_signo(uint32_t dividendo, uint32_t divisor);	// División de enteros sin truncamiento
 
 // Aritmética de punto fijo
@@ -241,9 +241,12 @@ int16_t string_indexOf( const char *cadena_a_buscar, const char *cadena_principa
 
 
 /**
- * Prototipo de funciones y variables para generación de timeout en milisegundos, utilizando timer0
+ * Prototipo de funciones y variables para generación de timeouts, utilizando timer0
 */
+void set_timeOut_us(uint16_t us);
 void set_timeOut_ms(uint16_t timeout_ms);
+
+void set_prescaler_timeout(uint16_t prescale);
 
 //Funciones para obtener tiempo transcurrido antes de que ocurriera timeout
 uint32_t get_ellapsedTime_ns(void);	// Tiempo transcurrido en [ns] 
