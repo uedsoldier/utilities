@@ -243,7 +243,7 @@ int16_t string_indexOf( const char *cadena_a_buscar, const char *cadena_principa
 /**
  * Prototipo de funciones y variables para generación de timeouts, utilizando timer0
 */
-void set_timeOut_us(uint16_t us);
+void set_timeOut_us(uint16_t timeout_us);
 void set_timeOut_ms(uint16_t timeout_ms);
 
 void set_prescaler_timeout(uint16_t prescale);
