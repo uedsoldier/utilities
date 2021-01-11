@@ -246,7 +246,7 @@ int16_t string_indexOf( const char *cadena_a_buscar, const char *cadena_principa
 /**
  * @brief Función que calcula valor de precarga de timer0 para generar un timeout vía la bandera de interrupción por desborde (TMR0IF).
  * El usuario deberá configurar previamente al timer 0 (preescala, fuente de reloj y modo de 16 bits) y después habilitar manualmente el timer0 (T0CONbits.TMR0ON = 1),
- * para dar mayor exactitud a la temporización.
+ * para dar mayor exactitud a la temporización. Se recomienda no tener activa la interrupción por desborde de timer0 (TMR0IE)
  * @param timeout_ms: (timeout_ms) Timeout en milisegundos requerido 
  * @return (void) 
 */
@@ -305,5 +305,53 @@ float get_ellapsedTime_us() {
 float get_ellapsedTime_ms() {
     return ((float)(get_ellapsedTime_ns()))/1000000.0F;         //Cálculo de tiempo de espera transcurrido en [ms]
 }
+
+/**
+ * @brief Función que calcula valor de precarga de timer0 para generar conteo de milisegundos vía la bandera de interrupción por desborde (TMR0IF).
+ * El usuario deberá configurar previamente al timer 0 (preescala, fuente de reloj y modo de 16 bits) y después habilitar manualmente el timer0 (T0CONbits.TMR0ON = 1),
+ * para dar mayor exactitud a la temporización. El usuario deberá activar las banderas de habilitación de interrupciones
+ * @param (void)
+ * @return (void) 
+ */
+void millisecond_counter_init() {
+    TMR0ON = 0;     // Si el timer está activado, desactívalo
+    precarga_timer0 = (uint16_t)(65536UL - (uint16_t)(division_entera_sin_signo(1000000000UL, 256UL * TCY_ns )));     //Cálculo de precarga para timer 0
+    TMR0H = make8(precarga_timer0,1);
+	TMR0L = make8(precarga_timer0,0);
+    TMR0IF = 0;     //Limpia bandera de interrupción por desborde de timer 0
+    milliseconds_count; = 0;    // Reinicio de contador de milisegundos
+    TMR0IE = 1;     // Habilita interrupción por desborde de timer 0
+}
+
+/**
+ * @brief Función para incrementar el contador de milisegundos. Se debe llamar en la función de interrupción, habiendo configurado correctamente el contador de milisegundos a
+ * través de la función millisecond_counter_init()
+ * @param (void)
+ * @return (void) 
+ */
+void millisecond_counter_callback() {
+    milliseconds_count++;  // Incremento de conteo de [ms]
+}
+
+/**
+ * @brief Función para obtener el contador de milisegundos transcurridos
+ * @param (void)
+ * @return (uint16_t) Contador de [ms] transcurridos
+ */
+uint16_t millisecond_counter_get(){
+    return milliseconds_count;
+}
+
+/**
+ * @brief Función para reinicio de contador de milisegundos a los valores iniciales para desactivar esta funcionalidad.
+ * @param (void)
+ * @return (void)
+ */
+void millisecond_counter_reset() {
+    TMR0ON = 0;                 // Desactiva timer0
+    TMR0IE = 0;                 // Deshabilita interrupción por desborde de timer0
+    milliseconds_count = 0;     // Reinicia contador de milisegundos
+}
+
 
 

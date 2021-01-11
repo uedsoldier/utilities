@@ -245,7 +245,6 @@ int16_t string_indexOf( const char *cadena_a_buscar, const char *cadena_principa
 */
 void set_timeOut_us(uint16_t timeout_us);
 void set_timeOut_ms(uint16_t timeout_ms);
-
 void set_prescaler_timeout(uint16_t prescale);
 
 //Funciones para obtener tiempo transcurrido antes de que ocurriera timeout
@@ -255,5 +254,13 @@ float get_ellapsedTime_ms(void);    // Tiempo transcurrido en [ms]
 
 volatile uint32_t timeout_ns;            //Valor de timeout en [ns]
 volatile uint16_t precarga_timer0;       //Variable de precarga para timer 0
+
+/**
+ * Prototipos de funciones y variables para conteo de milisegundos, utilizando timer0
+*/
+void millisecond_counter_init();
+void millisecond_counter_callback();
+
+volatile uint16_t milliseconds_count;
 
 #endif /*UTILS_H*/
