@@ -12,6 +12,22 @@
 #include "utils.h"
 
 /**
+ */
+bool array_compare(const void *array1, const void *array2, uint16_t len){
+    uint8_t *_array1 = (uint8_t*)array1;
+    uint8_t *_array2 = (uint8_t*)array2;
+    bool retVal = true; 
+    for(uint16_t i = 0; i != len; i++){
+        if(_array1[i] != _array2[i]){
+            retVal = false;
+            break;
+        }
+    }
+    return retVal;
+}
+
+
+/**
  * @brief Función de retardos largos en milisegundos. A grandes frecuencias de oscilación,
  * es posible que la función __delay_ms(), desborde sus variables internas y arroje un error el compilador.
  * @param ms (uint16_t) Tiempo de retardo en milisegundos, desde 1 hasta 65535, el retardo no es preciso debido
@@ -98,7 +114,7 @@ uint16_t Gray_decode (uint16_t dato_gray) {
  * @return (uint8_t) Byte con nibbles invertidos
 */
 uint8_t nibble_swap(uint8_t dato) {
-	return (dato << 4) | (dato >> 4);
+	return (uint8_t)(dato << 4) | (dato >> 4);
 }
 
 /**
@@ -141,6 +157,35 @@ uint8_t bcd2bin(uint8_t dato_bcd) {
         while(temp_h!=0);
         return dato;
     }
+}
+
+/**
+ * @brief Funcion que convierte un caracter ASCII numerico a su valor correspondiente como byte
+ * @param caracter (uint8_t) Dato ASCII a convertir en byte
+ * @return (uint8_t) Byte
+ */
+uint8_t ascii2byte(uint8_t caracter) {               
+
+    if(caracter>=0x30 && caracter<=0x39){ //Si es numero conviertelo
+    
+        return caracter-0x30; //Regresalo como numero
+    }
+    else
+        return 0;
+}
+
+/**
+ * @brief Funcion que convierte un byte a su valor correspondiente como caracter ASCII numerico 
+ * @param byte (uint8_t) Byte a convertir en dato ASCII
+ * @return (uint8_t) Dato ASCII
+ */
+uint8_t byte2ascii(uint8_t byte){           
+    if(byte <= 9){ //Si es numero conviertelo
+    
+        return byte+0x30; //Regresalo como ASCII
+    }
+    else
+        return 0;
 }
 
 /**
@@ -319,7 +364,7 @@ void millisecond_counter_init() {
     TMR0H = make8(precarga_timer0,1);
 	TMR0L = make8(precarga_timer0,0);
     TMR0IF = 0;     //Limpia bandera de interrupción por desborde de timer 0
-    milliseconds_count; = 0;    // Reinicio de contador de milisegundos
+    milliseconds_count = 0;    // Reinicio de contador de milisegundos
     TMR0IE = 1;     // Habilita interrupción por desborde de timer 0
 }
 

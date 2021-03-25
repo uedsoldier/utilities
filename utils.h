@@ -195,6 +195,8 @@ typedef struct whole_frac_t {
 /*
 	Macros y funciones para utilización con arreglos
 */
+bool array_compare(const void *array1, const void *array2, uint16_t len);
+
 /**
  * @brief Macro que devuelve la cantidad de bytes en un arreglo. Se divide el número de bytes
  * totales del arreglo entre el número de bytes de uno de los elementos.
@@ -223,6 +225,8 @@ uint16_t Gray_encode (uint16_t dato_bin);		// Codificador Gray
 uint16_t Gray_decode (uint16_t dato_gray);		// Decodificador Gray
 uint8_t bin2bcd(uint8_t dato_bin);				// Dato binario a BCD (Binary Coded Decimal)
 uint8_t bcd2bin(uint8_t dato_bcd);				// Dato BCD (Binary Coded Decimal) a binario
+uint8_t ascii2byte(uint8_t caracter);           // Dato ASCII a byte
+uint8_t byte2ascii(uint8_t caracter);           // Byte a dato ASCII 
 
 //Operaciones matemáticas
 int16_t map(int16_t x, int16_t x0, int16_t x1, int16_t y0, int16_t y1);	//Mapeo de valores de un dominio a otro 
@@ -236,7 +240,7 @@ float float_00(whole_frac_t *dato);  			// Estructura entero/fraccionario (2 dec
 float float_000(whole_frac_t *dato); 			// Estructura entero/fraccionario (3 decimales) a flotante equivalente (24 o 32 bits en el caso de Microchip)
 void whole_frac_init(whole_frac_t *dato);		// Inicialización de estructura de datos entero/fraccionario (whole_frac)
 
-//Manejo de cadenas
+// Manejo de cadenas
 int16_t string_indexOf( const char *cadena_a_buscar, const char *cadena_principal);
 
 
@@ -260,7 +264,9 @@ volatile uint16_t precarga_timer0;       //Variable de precarga para timer 0
 */
 void millisecond_counter_init();
 void millisecond_counter_callback();
+uint16_t millisecond_counter_get();
+void millisecond_counter_reset();
 
-volatile uint16_t milliseconds_count;
+volatile static uint16_t milliseconds_count;
 
 #endif /*UTILS_H*/
