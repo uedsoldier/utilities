@@ -4,8 +4,14 @@
  * @author Ing. José Roberto Parra Trewartha
 */
 #ifndef UTILS_H
-
 #define UTILS_H
+
+#include <xc.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
+#include <stddef.h>
 
 /*
 	Macros que definen la frecuencia de oscilación principal en [Hz], [kHz] y el ciclo máquina en [ns]
@@ -139,7 +145,7 @@
  * @param byte: Número de byte a obtener
  * @return (uint8_t) Valor del byte deseado
 */
-#define make8(var,byte) ((var>>(8*byte))&0xFF)
+#define make8(var,byte) ((uint8_t)((var>>(8*byte))&0xFF))
 
 /**
  * @brief Macro para crear una variable de 16 bits a partir de bytes individuales B0 y B1.
@@ -195,7 +201,9 @@ typedef struct whole_frac_t {
 /*
 	Macros y funciones para utilización con arreglos
 */
-bool array_compare(const void *array1, const void *array2, uint16_t len);
+bool array_compare(const void *array1, const void *array2, size_t len);
+bool array_isAllZeros(const void *array, size_t len);
+
 
 /**
  * @brief Macro que devuelve la cantidad de bytes en un arreglo. Se divide el número de bytes
@@ -212,12 +220,14 @@ bool array_compare(const void *array1, const void *array2, uint16_t len);
 //Función de retardo en milisegundos
 void delay_ms(uint16_t milisegundos);
 
-//Manejo de datos a nivel bit
+//Manejo de datos a nivel bit o byte
 
-uint8_t invierte_bitsByte(uint8_t dato_original);		// Inversión de bits en un dato de 8 bits
-uint16_t invierte_bitsInt16(uint16_t dato_original);	// Inversión de bits en un dato de 16 bits	
-uint32_t invierte_bitsInt32(uint32_t dato_original);	// Inversión de bits en un dato de 32 bits	
-uint8_t nibble_swap(uint8_t dato);						// Intercambio de nibbles dentro de un byte
+uint8_t bit_invert_Byte(uint8_t dato_original);		// Inversión de bits en un dato de 8 bits
+uint16_t bit_invert_Int16(uint16_t dato_original);	// Inversión de bits en un dato de 16 bits	
+uint24_t bit_invert_Int24(uint24_t dato_original);	// Inversión de bits en un dato de 24 bits
+uint32_t bit_invert_Int32(uint32_t dato_original);	// Inversión de bits en un dato de 32 bits	
+uint8_t nibble_swap(uint8_t dato);					// Intercambio de nibbles dentro de un byte
+uint16_t byte_swap(uint16_t dato);                  // Intercambio de bytes dentro de un dato de 16 bits
 
 //Conversión de datos
 

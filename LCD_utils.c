@@ -8,7 +8,7 @@
 */
 uint8_t LCD_CGROM(uint8_t dato) {
     switch(dato) {
-        case 164: //'ñ'
+        case 164: //''
             return LCD_enie;
         case 165: //'Ñ'
             return LCD_ENIE;

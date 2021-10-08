@@ -3,11 +3,6 @@
  * @brief Librería para manejo de estructuras de datos de tiempo
  * @author Ing. José Roberto Parra Trewartha
 */
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
 #include "NeoTime.h"
 
 /**
@@ -396,4 +391,4 @@ bool NeoTime_print(time_t *tiempo){
     printf("%s\r\n",valid? "Valid time":"Invalid time");
     return valid;
 }
-#endif
+#endif                       

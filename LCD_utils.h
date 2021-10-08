@@ -181,5 +181,3 @@ const char h_subindice[] = {0,0,0,0,16,16,28,20};
  */
 uint8_t LCD_CGROM(uint8_t dato);
 void LCD_createChar(uint8_t address, const char *datos);
-
-

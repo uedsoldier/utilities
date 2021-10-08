@@ -7,6 +7,12 @@
 #ifndef TIME_H
 #define TIME_H
 
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
+#include <stdlib.h>
+
 //
 #define NEOTIME_LOG
 

@@ -3,27 +3,41 @@
  * @brief Librería de funciones, macros y utilidades en general para programación de microcontroladores PIC de 8 bits.
  * @author Ing. José Roberto Parra Trewartha
 */
-#include <xc.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stddef.h>
 #include "utils.h"
 
 /**
+ * @brief Función que compara uno a uno 'len' elementos de dos arreglos de datos o estructuras.
+ * @param array1 (const void*) Arreglo de datos cualquier tipo
+ * @param array2 (const void*) Arreglo de datos cualquier tipo
+ * @param len (size_t) Cantidad de elementos a comparar
+ * @return (bool) True en caso de que ambos arreglos sean iguales en sus primeros 'len' elementos
  */
-bool array_compare(const void *array1, const void *array2, uint16_t len){
+bool array_compare(const void *array1, const void *array2, size_t len){
     uint8_t *_array1 = (uint8_t*)array1;
     uint8_t *_array2 = (uint8_t*)array2;
     bool retVal = true; 
-    for(uint16_t i = 0; i != len; i++){
-        if(_array1[i] != _array2[i]){
+    for(size_t i = 0; i != len; i++) {
+        if(_array1[i] != _array2[i]) {
             retVal = false;
             break;
         }
     }
     return retVal;
+}
+
+/**
+ * @brief Función que comprueba si los primeros 'len' elementos de un arreglo son todos ceros
+ * @param array (const void*) Arreglo de datos cualquier tipo
+ * @param len (size_t) Cantidad de elementos a comparar
+ * @return (bool) True en caso de que todos lo primeros 'len' elementos del arreglo sean ceros
+ */
+bool array_isAllZeros(const void *array, size_t len){
+    uint8_t *_array = (uint8_t*)array;
+    for(size_t i = 0; i != len; i++) {
+        if(_array[i] != 0) 
+            return false;
+    }
+    return true;
 }
 
 
@@ -42,9 +56,9 @@ void delay_ms(uint16_t ms) {
 /**
  * @brief Función para invertir los bits de un dato (útil para mandar/recibir LSb primero) 
  * @param dato_original dato de 8 bits a ser invertido, ej: 001001101
- * @return dato de 8 bits invertido,                    ej: 101100100
+ * @return (uint8_t) dato de 8 bits invertido,          ej: 101100100
 */
-uint8_t invierte_bitsByte(uint8_t dato_original) {
+uint8_t bit_invert_Byte(uint8_t dato_original) {
 	uint8_t dato_invertido = 0;
 	for( uint8_t i=0 ; i != 8; i++) {
 		if ( (dato_original & (1<<i)) != 0)
@@ -56,9 +70,9 @@ uint8_t invierte_bitsByte(uint8_t dato_original) {
 /**
  * @brief Función para invertir los bits de un dato de 16 bits (útil para mandar/recibir LSb primero) 
  * @param dato_original dato de 16 bits a ser invertido 
- * @return dato de 16 bits invertido,                     
+ * @return (uint16_t) dato de 16 bits invertido,                     
 */
-uint16_t invierte_bitsInt16(uint16_t dato_original) {
+uint16_t bit_invert_Int16(uint16_t dato_original) {
     uint16_t dato_invertido = 0;
     for(uint8_t i=0 ; i != 16; i++)
     {
@@ -69,11 +83,26 @@ uint16_t invierte_bitsInt16(uint16_t dato_original) {
 }
 
 /**
+ * @brief Función para invertir los bits de un dato de 24 bits (útil para mandar/recibir LSb primero) 
+ * @param dato_original dato de 24 bits a ser invertido 
+ * @return (uint24_t)dato de 24 bits invertido,                     
+*/
+uint24_t bit_invert_Int24(uint24_t dato_original) {
+    uint24_t dato_invertido = 0;
+    for(uint8_t i=0 ; i != 24; i++)
+    {
+        if ( (dato_original & (1<<i)) != 0)
+            dato_invertido|= (1 << (23-i));
+    }
+    return dato_invertido;
+}
+
+/**
  * @brief Función para invertir los bits de un dato de 32 bits (útil para mandar/recibir LSb primero) 
  * @param dato_original dato de 32 bits a ser invertido 
  * @return dato de 32 bits invertido,                     
 */
-uint32_t invierte_bitsInt32(uint32_t dato_original) {
+uint32_t bit_invert_Int32(uint32_t dato_original) {
     uint32_t dato_invertido = 0;
     for(uint8_t i=0 ; i != 32; i++)
     {
@@ -109,13 +138,23 @@ uint16_t Gray_decode (uint16_t dato_gray) {
 }
 
 /**
- * @brief Función para  inversión de nibbles dentro de un byte 
+ * @brief Función para la inversión de nibbles dentro de un byte 
  * @param dato (uint8_t) Byte cuyos nibbles serán invertidos
  * @return (uint8_t) Byte con nibbles invertidos
 */
 uint8_t nibble_swap(uint8_t dato) {
 	return (uint8_t)(dato << 4) | (dato >> 4);
 }
+
+/**
+ * @brief Función para la inversión de bytes dentro de una variable de 2 bytes
+ * @param dato (uint16_t) Variable de dos bytes cuyos bytes serán invertidos
+ * @return (uint16_t) Variable de dos bytes con bytes invertidos
+*/
+uint16_t byte_swap(uint16_t dato) {
+	return ((dato & (uint16_t)0xFF00) >> 8) | ((dato & (uint16_t)0x00FF) << 8);
+}
+
 
 /**
  * @brief Función de conversión de dato binario en un dato BCD (Binary Coded Decimal)
@@ -245,7 +284,7 @@ int32_t int32_000(whole_frac_t *dato)  {
  * @return (float) Equivalente flotante con 2 decimales
 */
 float float_00(whole_frac_t *dato)  { 
-    return ((float)dato->whole) + ((float)dato->frac)*0.01; 
+    return ((float)dato->whole) + ((float)dato->frac)*0.01F; 
 }
 
 /**
@@ -254,7 +293,7 @@ float float_00(whole_frac_t *dato)  {
  * @return (int32_t) Equivalente flotante con 3 decimales
 */
 float float_000(whole_frac_t *dato)  { 
-    return ((float)dato->whole) + ((float)dato->frac)*0.001; 
+    return ((float)dato->whole) + ((float)dato->frac)*0.001F; 
 }
 
 /**
