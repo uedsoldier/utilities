@@ -49,8 +49,13 @@ bool array_isAllZeros(const void *array, size_t len){
  * @return (void)
 */
 void delay_ms(uint16_t ms) {
-	for(;ms;ms--)
+	for(;ms;ms--) {
+        #if defined(__XC8)
 		__delay_ms(1);
+        #else
+
+        #endif
+    }
 }
 
 /**
@@ -327,6 +332,7 @@ int16_t string_indexOf( const char *cadena_a_buscar, const char *cadena_principa
         return (int16_t)(apuntador_ocurrencia - cadena_principal);
 }   
 
+#if defined(__XC8)
 /**
  * @brief Función que calcula valor de precarga de timer0 para generar un timeout vía la bandera de interrupción por desborde (TMR0IF).
  * El usuario deberá configurar previamente al timer 0 (preescala, fuente de reloj y modo de 16 bits) y después habilitar manualmente el timer0 (T0CONbits.TMR0ON = 1),
@@ -422,7 +428,7 @@ void millisecond_counter_callback() {
  * @param (void)
  * @return (uint16_t) Contador de [ms] transcurridos
  */
-uint16_t millisecond_counter_get(){
+uint32_t millisecond_counter_get(){
     return milliseconds_count;
 }
 
@@ -436,6 +442,8 @@ void millisecond_counter_reset() {
     TMR0IE = 0;                 // Deshabilita interrupción por desborde de timer0
     milliseconds_count = 0;     // Reinicia contador de milisegundos
 }
+
+#endif
 
 
 

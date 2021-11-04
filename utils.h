@@ -6,17 +6,18 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <xc.h>
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <stddef.h>
 
-/*
-	Macros que definen la frecuencia de oscilación principal en [Hz], [kHz] y el ciclo máquina en [ns]
-	Se realiza en este sitio para no tener que definirla en todos los archivos .c
-	Estos archivos deberán incluir al header utils.h para que esto se cumpla
+#if defined (__XC)
+#include <xc.h>
+/**
+ * @brief Macros que definen la frecuencia de oscilación principal en [Hz], [kHz] y el ciclo máquina en [ns]
+ * Se realiza en este sitio para no tener que definirla en todos los archivos .c
 */
 
 /**
@@ -57,12 +58,14 @@
 #pragma warning disable 759     // expression generates no code
 #pragma warning disable 751     // arithmetic overflow in constant expression
 
-/*
-	Macros para manejo individual de bits dentro variables. El parámetro bit indica la posición, que 
-	empieza desde el bit 0 y el último bit será 7 (1 byte), 15 (2 bytes) o 31(4 bytes)
-	Validada 8-10-2017 (ya había sido validadas desde proyecto de tesis CCA). Las macros de 32 bits fueron 
-    validadas el 28-12-2018.
-*/
+#endif
+
+/**
+ * Macros para manejo individual de bits dentro variables. El parámetro bit indica la posición, que empieza
+ * desde el bit 0 y el último bit será 7 (1 byte), 15 (2 bytes) o 31(4 bytes)
+ * Validada 8-10-2017 (ya había sido validadas desde proyecto de tesis CCA). Las macros de 32 bits fueron 
+ * validadas el 28-12-2018.
+ */
 
 /**
  * @brief Macro para intercambio de variables sin variables intermedias
@@ -181,8 +184,8 @@
 	(byte & 0x02 ? '1' : '0'), \
 	(byte & 0x01 ? '1' : '0') 
 
-/*
-	Macros y estructuras de datos para operaciones matemáticas
+/**
+ * Macros y estructuras de datos para operaciones matemáticas
 */
 
 /**
@@ -198,9 +201,10 @@ typedef struct whole_frac_t {
     int16_t frac;
 } whole_frac_t;
 
-/*
-	Macros y funciones para utilización con arreglos
+/**
+ * Macros y funciones para utilización con arreglos
 */
+
 bool array_compare(const void *array1, const void *array2, size_t len);
 bool array_isAllZeros(const void *array, size_t len);
 
@@ -255,13 +259,15 @@ int16_t string_indexOf( const char *cadena_a_buscar, const char *cadena_principa
 
 
 /**
- * Prototipo de funciones y variables para generación de timeouts, utilizando timer0
+ * Prototipo de funciones y variables para generación de timeouts y conteo de tiempo, utilizando timer0 en
+ * microcontroladores PIC de 8 bits
 */
+#if defined(__XC8)
 void set_timeOut_us(uint16_t timeout_us);
 void set_timeOut_ms(uint16_t timeout_ms);
 void set_prescaler_timeout(uint16_t prescale);
 
-//Funciones para obtener tiempo transcurrido antes de que ocurriera timeout
+// Funciones para obtener tiempo transcurrido antes de que ocurriera timeout
 uint32_t get_ellapsedTime_ns(void);	// Tiempo transcurrido en [ns] 
 float get_ellapsedTime_us(void);	// Tiempo transcurrido en [μs]
 float get_ellapsedTime_ms(void);    // Tiempo transcurrido en [ms]     
@@ -274,9 +280,10 @@ volatile uint16_t precarga_timer0;       //Variable de precarga para timer 0
 */
 void millisecond_counter_init();
 void millisecond_counter_callback();
-uint16_t millisecond_counter_get();
+uint32_t millisecond_counter_get();
 void millisecond_counter_reset();
 
-volatile static uint16_t milliseconds_count;
+volatile static uint32_t milliseconds_count;
+#endif
 
 #endif /*UTILS_H*/
