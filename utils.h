@@ -228,7 +228,9 @@ void delay_ms(uint16_t milisegundos);
 
 uint8_t bit_invert_Byte(uint8_t dato_original);		// Inversión de bits en un dato de 8 bits
 uint16_t bit_invert_Int16(uint16_t dato_original);	// Inversión de bits en un dato de 16 bits	
+#if defined(__XC8)
 uint24_t bit_invert_Int24(uint24_t dato_original);	// Inversión de bits en un dato de 24 bits
+#endif
 uint32_t bit_invert_Int32(uint32_t dato_original);	// Inversión de bits en un dato de 32 bits	
 uint8_t nibble_swap(uint8_t dato);					// Intercambio de nibbles dentro de un byte
 uint16_t byte_swap(uint16_t dato);                  // Intercambio de bytes dentro de un dato de 16 bits
