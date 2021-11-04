@@ -87,6 +87,7 @@ uint16_t bit_invert_Int16(uint16_t dato_original) {
     return dato_invertido;
 }
 
+#if defined(__XC8)
 /**
  * @brief Función para invertir los bits de un dato de 24 bits (útil para mandar/recibir LSb primero) 
  * @param dato_original dato de 24 bits a ser invertido 
@@ -101,6 +102,7 @@ uint24_t bit_invert_Int24(uint24_t dato_original) {
     }
     return dato_invertido;
 }
+#endif
 
 /**
  * @brief Función para invertir los bits de un dato de 32 bits (útil para mandar/recibir LSb primero) 
