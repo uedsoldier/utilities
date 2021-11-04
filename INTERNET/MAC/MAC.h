@@ -6,8 +6,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-//
-#define MAC_LOG
+/**
+ * @brief Macro para activar o desactivar logging por puerto serie
+ */
+#define	MAC_LOG	1
+
 /**
 * @brief Definición de estructura de datos para direccionamiento MAC
 */

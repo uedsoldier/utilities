@@ -1,0 +1,41 @@
+utilities:
+    Enc28j60Network.c renombrado a enc28j60.c
+    Enc28j60Network.h movido a enc28j60.h OK
+    enc28j60.h OK
+    mempool.c OK
+    mempool.h OK
+    mempool_conf.h      OK
+    ip-conf.h           OK
+    ip.c                OK
+    ip.h                OK
+    ip_arch.h           OK
+    ip_arp.c            OK
+    ip_arp.h            OK
+    ipethernet-conf.h   OK
+    ipopt.h             OK
+    util.h              OK
+dhcp.c                  OK sin UDP
+dhcp.h                  OK sin UDP
+dns.c                   OK sin UDP
+dns.h                   OK sin UDP
+ethernet.c              en proceso
+ethernet.h              en proceso    
+ethernet_client.c       en proceso  
+ethernet_client.h       en proceso  
+ethernet_enc.h          en proceso  
+ethernet_server.c       en proceso  
+ethernet_server.h       en proceso  
+ethernet_udp.c          en proceso  
+ethernet_udp.h          en proceso  
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+
+

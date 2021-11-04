@@ -14,7 +14,7 @@
 #define	ETH_LOG_DEBUG_V2	9	// debug-verbose-level (vv) messages 
 #define	ETH_LOG_DEBUG_V3	10	// debug-verbose-level (vvv) messages 
 
-#warning "You can configure LogObject and ACTLOGLEVEL in 'utility/logging.h'. Note that more verbosity implies more memory usage."
+#warning "You can configure LogObject and ACTLOGLEVEL in 'utilities/logging.h'. Note that more verbosity implies more memory usage."
 #define ETH_ACTLOGLEVEL     LOG_NONE
 //#define ACTLOGLEVEL LOG_WARNING
 //#define ACTLOGLEVEL LOG_INFO
