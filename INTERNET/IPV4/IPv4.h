@@ -1,12 +1,18 @@
 #ifndef IPV4_H
 #define IPV4_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+
 //
 #define IPV4_LOG 1
+
+
+#define IPV4_BYTE_COUNT     4
+#define IPV4_STRING_SEPARATOR   '.'
 
 /**
 * @brief Definición de estructura de datos para direccionamiento IPv4
@@ -19,12 +25,14 @@ typedef union IPV4_address {
     uint32_t ipv4_word;
 } IPV4_address_t;
 
-void makeIPfromArray(IPV4_address_t *address, uint8_t *bytes);
-void makeArrayFromIP(IPV4_address_t *address, uint8_t *bytes);
-void makeIPfromString(IPV4_address_t *address, char *string);
-char *makeStringFromIP(IPV4_address_t *address);
+void IPV4_fromArray(IPV4_address_t *address, uint8_t *bytes);
+void array_fromIPV4(IPV4_address_t *address, uint8_t *bytes);
+void IPV4_fromString(IPV4_address_t *address, const char *string);
+char *string_fromIPV4(IPV4_address_t *address);
 bool IPV4_validMask(IPV4_address_t *subnetmask);
-uint32_t makeIPintFromIP(IPV4_address_t *address);
-char *makeStringFromInt(uint32_t ip_int);
+uint32_t IPV4_int_fromIPv4(IPV4_address_t *address);
+char *IPV4_string_fromInt(uint32_t ip_int);
+void IPV4_copy(IPV4_address_t *dest, IPV4_address_t *src );
+bool IPV4_compare(IPV4_address_t *a1, IPV4_address_t *a2 );
 
 #endif /* IPV4_H */

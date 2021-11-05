@@ -18,7 +18,7 @@
  * If uIP should use a fixed IP address, the settings are set in the
  * uipopt.h file. If not, the macros IP_sethostaddr(),
  * IP_setdraddr() and IP_setnetmask() should be used instead.
- * @hideinitializer
+
 */
 #define IP_FIXED_ADDRESS 0
 
@@ -29,7 +29,7 @@
  * If this configuration option is 0, the macro IP_setethaddr() can
  * be used to specify the Ethernet address at run-time.
  *
- * @hideinitializer
+
  */
 #define IP_FIXED_ETHADDR 0
 
@@ -40,7 +40,7 @@
 /**
  * @brief The IP TTL (time to live) of IP packets sent by uIP.
  * This should normally not be changed.
- * @hideinitializer
+
 */
 #define IP_TTL  64
 
@@ -55,7 +55,7 @@
  *
  * @note IP packet reassembly is not heavily tested.
  *
- * @hideinitializer
+
  */
 #define IP_REASSEMBLY   0
 
@@ -71,7 +71,7 @@
 
 /**
  * @brief Toggles wether UDP support should be compiled in or not.
- * @hideinitializer
+
  */
 #ifdef IP_CONF_UDP
 #define IP_UDP IP_CONF_UDP
@@ -84,7 +84,7 @@
  * @brief Toggles if UDP checksums should be used or not.
  * @note Support for UDP checksums is currently not included in uIP,
  * so this option has no function.
- * @hideinitializer
+
  */
 #ifdef IP_CONF_UDP_CHECKSUMS
 #define IP_UDP_CHECKSUMS IP_CONF_UDP_CHECKSUMS
