@@ -22,9 +22,9 @@
 */
 #if IP_CONF_IPV6
 // TODO
-typedef IPV6_address_t IP_address_t 
+typedef IPV6_address_t ipaddr_t 
 #else /* IP_CONF_IPV6 */
-typedef IPV4_address_t IP_address_t 
+typedef IPV4_address_t ipaddr_t 
 #endif
 
 
@@ -36,12 +36,12 @@ typedef IPV4_address_t IP_address_t
  *
  * Example:
     \code
-    IP_address_t addr;
+    ipaddr_t addr;
     ip_ipaddr(&addr, 192,168,1,2);
     ip_sethostaddr(&addr);
 
     \endcode
- * @param addr A pointer to an IP address of type IP_address_t;
+ * @param addr A pointer to an IP address of type ipaddr_t;
  */
 #define ip_sethostaddr(addr) ip_ipaddr_copy(ip_hostaddr, (addr))
 
@@ -54,10 +54,10 @@ typedef IPV4_address_t IP_address_t
  *
  * Example:
     \code
-    IP_address_t hostaddr;
+    ipaddr_t hostaddr;
     ip_gethostaddr(&hostaddr);
     \endcode
- * @param addr A pointer to a IP_address_t variable that will be
+ * @param addr A pointer to a ipaddr_t variable that will be
  * filled in with the currently configured IP address.
  */
 #define ip_gethostaddr(addr) ip_ipaddr_copy((addr), ip_hostaddr)
@@ -65,28 +65,28 @@ typedef IPV4_address_t IP_address_t
 /**
  * @brief Set the default router's IP address.
  *
- * @param addr A pointer to a IP_address_t variable containing the IP
+ * @param addr A pointer to a ipaddr_t variable containing the IP
  * address of the default router.
  */
 #define ip_setdraddr(addr) ip_ipaddr_copy(ip_draddr, (addr))
 
 /**
  * @brief Set the netmask.
- * @param addr A pointer to a IP_address_t variable containing the IP
+ * @param addr A pointer to a ipaddr_t variable containing the IP
  * address of the netmask.
  */
 #define ip_setnetmask(addr) ip_ipaddr_copy(ip_netmask, (addr))
 
 /**
  * @brief Get the default router's IP address.
- * @param addr A pointer to a IP_address_t variable that will be
+ * @param addr A pointer to a ipaddr_t variable that will be
  * filled in with the IP address of the default router.
  */
 #define ip_getdraddr(addr) ip_ipaddr_copy((addr), ip_draddr)
 
 /**
  * @brief Get the netmask.
- * @param addr A pointer to a IP_address_t variable that will be
+ * @param addr A pointer to a ipaddr_t variable that will be
  * filled in with the value of the netmask.
  */
 #define ip_getnetmask(addr) ip_ipaddr_copy((addr), ip_netmask)
@@ -351,7 +351,7 @@ void ip_unlisten(uint16_t port);
  * byte order, a conversion using HTONS() or htons() is necessary.
  *
     \code
-    IP_address_t ipaddr;
+    ipaddr_t ipaddr;
     ip_ipaddr(&ipaddr, 192,168,1,2);
     ip_connect(&ipaddr, HTONS(80));
     \endcode
@@ -364,7 +364,7 @@ void ip_unlisten(uint16_t port);
  * or NULL if no connection could be allocated.
  *
  */
-struct ip_conn *ip_connect(IP_address_t *ripaddr, uint16_t port);
+struct ip_conn *ip_connect(ipaddr_t *ripaddr, uint16_t port);
 
 
 
@@ -616,7 +616,7 @@ void ip_send(const void *data, int len);
  *
  * Example:
     \code
-    IP_address_t addr;
+    ipaddr_t addr;
     struct ip_udp_conn *c;
 
     ip_ipaddr(&addr, 192,168,2,1);
@@ -632,7 +632,7 @@ void ip_send(const void *data, int len);
  * \return The ip_udp_conn structure for the new connection or NULL
  * if no connection could be allocated.
  */
-struct ip_udp_conn *ip_udp_new(IP_address_t *ripaddr, uint16_t rport);
+struct ip_udp_conn *ip_udp_new(ipaddr_t *ripaddr, uint16_t rport);
 
 /**
  * Removed a UDP connection.
@@ -668,6 +668,497 @@ struct ip_udp_conn *ip_udp_new(IP_address_t *ripaddr, uint16_t rport);
  */
 #define ip_udp_send(len) ip_send((char *)ip_appdata, len)
 
+//!
+
+
+/**
+ * Pointer to the application data in the packet buffer.
+ *
+ * This pointer points to the application data when the application is
+ * called. If the application wishes to send data, the application may
+ * use this space to write the data into before calling ip_send().
+ */
+extern void *ip_appdata;
+
+#if IP_URGDATA > 0
+/* uint8_t *ip_urgdata:
+ *
+ * This pointer points to any urgent data that has been received. Only
+ * present if compiled with support for urgent data (IP_URGDATA).
+ */
+extern void *ip_urgdata;
+#endif /* IP_URGDATA > 0 */
+
+/**
+ * Variables utilizadas en los controladores de dispositivos uIP
+ */
+/**
+ * The length of the packet in the ip_buf buffer.
+ *
+ * The global variable ip_len holds the length of the packet in the
+ * ip_buf buffer.
+ *
+ * When the network device driver calls the uIP input function,
+ * ip_len should be set to the length of the packet in the ip_buf
+ * buffer.
+ *
+ * When sending packets, the device driver should use the contents of
+ * the ip_len variable to determine the length of the outgoing
+ * packet.
+ *
+ */
+extern uint16_t ip_len;
+
+#if IP_URGDATA > 0
+extern uint16_t ip_urglen, ip_surglen;
+#endif /* IP_URGDATA > 0 */
+
+/**
+ * Representation of a uIP TCP connection.
+ *
+ * The ip_conn structure is used for identifying a connection. All
+ * but one field in the structure are to be considered read-only by an
+ * application. The only exception is the appstate field whos purpose
+ * is to let the application store application-specific state (e.g.,
+ * file pointers) for the connection. The type of this field is
+ * configured in the "uipopt.h" header file.
+ */
+struct ip_conn {
+  ipaddr_t ripaddr;   /**< The IP address of the remote host. */
+  
+  uint16_t lport;        /**< The local TCP port, in network byte order. */
+  uint16_t rport;        /**< The local remote TCP port, in network byte
+			 order. */
+  
+  uint8_t rcv_nxt[4];    /**< The sequence number that we expect to
+			 receive next. */
+  uint8_t snd_nxt[4];    /**< The sequence number that was last sent by
+                         us. */
+  uint16_t len;          /**< Length of the data that was previously sent. */
+  uint16_t mss;          /**< Current maximum segment size for the
+			 connection. */
+  uint16_t initialmss;   /**< Initial maximum segment size for the
+			 connection. */
+  uint8_t sa;            /**< Retransmission time-out calculation state
+			 variable. */
+  uint8_t sv;            /**< Retransmission time-out calculation state
+			 variable. */
+  uint8_t rto;           /**< Retransmission time-out. */
+  uint8_t tcpstateflags; /**< TCP state and flags. */
+  uint8_t timer;         /**< The retransmission timer. */
+  uint8_t nrtx;          /**< The number of retransmissions for the last
+			 segment sent. */
+
+  /** The application state. */
+  ip_tcp_appstate_t appstate;
+};
+
+
+/**
+ * Pointer to the current TCP connection.
+ *
+ * The ip_conn pointer can be used to access the current TCP
+ * connection.
+ */
+extern struct ip_conn *ip_conn;
+/* The array containing all uIP connections. */
+extern struct ip_conn ip_conns[IP_CONNS];
+
+/**
+ * 4-byte array used for the 32-bit sequence number calculations.
+ */
+extern uint8_t ip_acc32[4];
+
+#if IP_UDP
+/**
+ * Representation of a uIP UDP connection.
+ */
+struct ip_udp_conn {
+  ipaddr_t ripaddr;   /**< The IP address of the remote peer. */
+  uint16_t lport;        /**< The local port number in network byte order. */
+  uint16_t rport;        /**< The remote port number in network byte order. */
+  uint8_t  ttl;          /**< Default time-to-live. */
+
+  /** The application state. */
+  ip_udp_appstate_t appstate;
+};
+
+/**
+ * The current UDP connection.
+ */
+extern struct ip_udp_conn *ip_udp_conn;
+extern struct ip_udp_conn ip_udp_conns[IP_UDP_CONNS];
+#endif /* IP_UDP */
+
+/**
+ * The structure holding the TCP/IP statistics that are gathered if
+ * IP_STATISTICS is set to 1.
+ *
+ */
+struct ip_stats {
+  struct {
+    ip_stats_t drop;     /**< Number of dropped packets at the IP
+			     layer. */
+    ip_stats_t recv;     /**< Number of received packets at the IP
+			     layer. */
+    ip_stats_t sent;     /**< Number of sent packets at the IP
+			     layer. */
+    ip_stats_t vhlerr;   /**< Number of packets dropped due to wrong
+			     IP version or header length. */
+    ip_stats_t hblenerr; /**< Number of packets dropped due to wrong
+			     IP length, high byte. */
+    ip_stats_t lblenerr; /**< Number of packets dropped due to wrong
+			     IP length, low byte. */
+    ip_stats_t fragerr;  /**< Number of packets dropped since they
+			     were IP fragments. */
+    ip_stats_t chkerr;   /**< Number of packets dropped due to IP
+			     checksum errors. */
+    ip_stats_t protoerr; /**< Number of packets dropped since they
+			     were neither ICMP, UDP nor TCP. */
+  } ip;                   /**< IP statistics. */
+  struct {
+    ip_stats_t drop;     /**< Number of dropped ICMP packets. */
+    ip_stats_t recv;     /**< Number of received ICMP packets. */
+    ip_stats_t sent;     /**< Number of sent ICMP packets. */
+    ip_stats_t typeerr;  /**< Number of ICMP packets with a wrong
+			     type. */
+  } icmp;                 /**< ICMP statistics. */
+  struct {
+    ip_stats_t drop;     /**< Number of dropped TCP segments. */
+    ip_stats_t recv;     /**< Number of recived TCP segments. */
+    ip_stats_t sent;     /**< Number of sent TCP segments. */
+    ip_stats_t chkerr;   /**< Number of TCP segments with a bad
+			     checksum. */
+    ip_stats_t ackerr;   /**< Number of TCP segments with a bad ACK
+			     number. */
+    ip_stats_t rst;      /**< Number of recevied TCP RST (reset) segments. */
+    ip_stats_t rexmit;   /**< Number of retransmitted TCP segments. */
+    ip_stats_t syndrop;  /**< Number of dropped SYNs due to too few
+			     connections was avaliable. */
+    ip_stats_t synrst;   /**< Number of SYNs for closed ports,
+			     triggering a RST. */
+  } tcp;                  /**< TCP statistics. */
+#if IP_UDP
+  struct {
+    ip_stats_t drop;     /**< Number of dropped UDP segments. */
+    ip_stats_t recv;     /**< Number of recived UDP segments. */
+    ip_stats_t sent;     /**< Number of sent UDP segments. */
+    ip_stats_t chkerr;   /**< Number of UDP segments with a bad
+			     checksum. */
+  } udp;                  /**< UDP statistics. */
+#endif /* IP_UDP */
+};
+
+/**
+ * The uIP TCP/IP statistics.
+ *
+ * This is the variable in which the uIP TCP/IP statistics are gathered.
+ */
+extern struct ip_stats ip_stat;
+
+
+/*---------------------------------------------------------------------------*/
+/* All the stuff below this point is internal to uIP and should not be
+ * used directly by an application or by a device driver.
+ */
+/*---------------------------------------------------------------------------*/
+/* uint8_t ip_flags:
+ *
+ * When the application is called, ip_flags will contain the flags
+ * that are defined in this file. Please read below for more
+ * infomation.
+ */
+extern uint8_t ip_flags;
+
+/* The following flags may be set in the global variable ip_flags
+   before calling the application callback. The IP_ACKDATA,
+   IP_NEWDATA, and IP_CLOSE flags may both be set at the same time,
+   whereas the others are mutualy exclusive. Note that these flags
+   should *NOT* be accessed directly, but only through the uIP
+   functions/macros. */
+
+#define IP_ACKDATA   1     /* Signifies that the outstanding data was
+			       acked and the application should send
+			       out new data instead of retransmitting
+			       the last data. */
+#define IP_NEWDATA   2     /* Flags the fact that the peer has sent
+			       us new data. */
+#define IP_REXMIT    4     /* Tells the application to retransmit the
+			       data that was last sent. */
+#define IP_POLL      8     /* Used for polling the application, to
+			       check if the application has data that
+			       it wants to send. */
+#define IP_CLOSE     16    /* The remote host has closed the
+			       connection, thus the connection has
+			       gone away. Or the application signals
+			       that it wants to close the
+			       connection. */
+#define IP_ABORT     32    /* The remote host has aborted the
+			       connection, thus the connection has
+			       gone away. Or the application signals
+			       that it wants to abort the
+			       connection. */
+#define IP_CONNECTED 64    /* We have got a connection from a remote
+                               host and have set up a new connection
+                               for it, or an active connection has
+                               been successfully established. */
+
+#define IP_TIMEDOUT  128   /* The connection has been aborted due to
+			       too many retransmissions. */
+
+/* ip_process(flag):
+ *
+ * The actual uIP function which does all the work.
+ */
+void ip_process(uint8_t flag);
+
+/* The following flags are passed as an argument to the ip_process()
+   function. They are used to distinguish between the two cases where
+   ip_process() is called. It can be called either because we have
+   incoming data that should be processed, or because the periodic
+   timer has fired. These values are never used directly, but only in
+   the macrose defined in this file. */
+ 
+#define IP_DATA          1     /* Tells uIP that there is incoming
+				   data in the ip_buf buffer. The
+				   length of the data is stored in the
+				   global variable ip_len. */
+#define IP_TIMER         2     /* Tells uIP that the periodic timer
+				   has fired. */
+#define IP_POLL_REQUEST  3     /* Tells uIP that a connection should
+				   be polled. */
+#define IP_UDP_SEND_CONN 4     /* Tells uIP that a UDP datagram
+				   should be constructed in the
+				   ip_buf buffer. */
+#if IP_UDP
+#define IP_UDP_TIMER     5
+#endif /* IP_UDP */
+
+/* The TCP states used in the ip_conn->tcpstateflags. */
+#define IP_CLOSED      0
+#define IP_SYN_RCVD    1
+#define IP_SYN_SENT    2
+#define IP_ESTABLISHED 3
+#define IP_FIN_WAIT_1  4
+#define IP_FIN_WAIT_2  5
+#define IP_CLOSING     6
+#define IP_TIME_WAIT   7
+#define IP_LAST_ACK    8
+#define IP_TS_MASK     15
+  
+#define IP_STOPPED      16
+
+/* The TCP and IP headers. */
+struct ip_tcpip_hdr {
+#if IP_CONF_IPV6
+  /* IPv6 header. */
+  uint8_t vtc,
+    tcflow;
+  uint16_t flow;
+  uint8_t len[2];
+  uint8_t proto, ttl;
+  ip_ip6addr_t srcipaddr, destipaddr;
+#else /* IP_CONF_IPV6 */
+  /* IPv4 header. */
+  uint8_t vhl,
+    tos,
+    len[2],
+    ipid[2],
+    ipoffset[2],
+    ttl,
+    proto;
+  uint16_t ipchksum;
+  uint16_t srcipaddr[2],
+    destipaddr[2];
+#endif /* IP_CONF_IPV6 */
+  
+  /* TCP header. */
+  uint16_t srcport,
+    destport;
+  uint8_t seqno[4],
+    ackno[4],
+    tcpoffset,
+    flags,
+    wnd[2];
+  uint16_t tcpchksum;
+  uint8_t urgp[2];
+  uint8_t optdata[4];
+};
+
+/* The ICMP and IP headers. */
+struct ip_icmpip_hdr {
+#if IP_CONF_IPV6
+  /* IPv6 header. */
+  uint8_t vtc,
+    tcf;
+  uint16_t flow;
+  uint8_t len[2];
+  uint8_t proto, ttl;
+  ip_ip6addr_t srcipaddr, destipaddr;
+#else /* IP_CONF_IPV6 */
+  /* IPv4 header. */
+  uint8_t vhl,
+    tos,
+    len[2],
+    ipid[2],
+    ipoffset[2],
+    ttl,
+    proto;
+  uint16_t ipchksum;
+  uint16_t srcipaddr[2],
+    destipaddr[2];
+#endif /* IP_CONF_IPV6 */
+  
+  /* ICMP (echo) header. */
+  uint8_t type, icode;
+  uint16_t icmpchksum;
+#if !IP_CONF_IPV6
+  uint16_t id, seqno;
+#else /* !IP_CONF_IPV6 */
+  uint8_t flags, reserved1, reserved2, reserved3;
+  uint8_t icmp6data[16];
+  uint8_t options[1];
+#endif /* !IP_CONF_IPV6 */
+};
+
+
+/* The UDP and IP headers. */
+struct ip_udpip_hdr {
+#if IP_CONF_IPV6
+  /* IPv6 header. */
+  uint8_t vtc,
+    tcf;
+  uint16_t flow;
+  uint8_t len[2];
+  uint8_t proto, ttl;
+  ip_ip6addr_t srcipaddr, destipaddr;
+#else /* IP_CONF_IPV6 */
+  /* IP header. */
+  uint8_t vhl,
+    tos,
+    len[2],
+    ipid[2],
+    ipoffset[2],
+    ttl,
+    proto;
+  uint16_t ipchksum;
+  uint16_t srcipaddr[2],
+    destipaddr[2];
+#endif /* IP_CONF_IPV6 */
+  
+  /* UDP header. */
+  uint16_t srcport,
+    destport;
+  uint16_t udplen;
+  uint16_t udpchksum;
+};
+
+
+
+/**
+ * The buffer size available for user data in the \ref ip_buf buffer.
+ *
+ * This macro holds the available size for user data in the \ref
+ * ip_buf buffer. The macro is intended to be used for checking
+ * bounds of available user data.
+ *
+ * Example:
+ \code
+ snprintf(ip_appdata, IP_APPDATA_SIZE, "%u\n", i);
+ \endcode
+ *
+ * \hideinitializer
+ */
+#define IP_APPDATA_SIZE (IP_BUFSIZE - IP_LLH_LEN - IP_TCPIP_HLEN)
+
+
+#define IP_PROTO_ICMP  1
+#define IP_PROTO_TCP   6
+#define IP_PROTO_UDP   17
+#define IP_PROTO_ICMP6 58
+
+/* Header sizes. */
+#if IP_CONF_IPV6
+#define IP_IPH_LEN    40
+#else /* IP_CONF_IPV6 */
+#define IP_IPH_LEN    20    /* Size of IP header */
+#endif /* IP_CONF_IPV6 */
+#define IP_UDPH_LEN    8    /* Size of UDP header */
+#define IP_TCPH_LEN   20    /* Size of TCP header */
+#define IP_IPUDPH_LEN (IP_UDPH_LEN + IP_IPH_LEN)    /* Size of IP +
+							  UDP
+							  header */
+#define IP_IPTCPH_LEN (IP_TCPH_LEN + IP_IPH_LEN)    /* Size of IP +
+							  TCP
+							  header */
+#define IP_TCPIP_HLEN IP_IPTCPH_LEN
+
+
+#if IP_FIXEDADDR
+extern const ipaddr_t ip_hostaddr, ip_netmask, ip_draddr;
+#else /* IP_FIXEDADDR */
+extern ipaddr_t ip_hostaddr, ip_netmask, ip_draddr;
+#endif /* IP_FIXEDADDR */
+
+
+
+/**
+ * Representation of a 48-bit Ethernet address.
+ */
+struct ip_eth_addr {
+  uint8_t addr[6];
+};
+
+/**
+ * Calculate the Internet checksum over a buffer.
+ *
+ * The Internet checksum is the one's complement of the one's
+ * complement sum of all 16-bit words in the buffer.
+ *
+ * See RFC1071.
+ *
+ * \param buf A pointer to the buffer over which the checksum is to be
+ * computed.
+ *
+ * \param len The length of the buffer over which the checksum is to
+ * be computed.
+ *
+ * \return The Internet checksum of the buffer.
+ */
+uint16_t ip_chksum(uint16_t *buf, uint16_t len);
+
+/**
+ * Calculate the IP header checksum of the packet header in ip_buf.
+ *
+ * The IP header checksum is the Internet checksum of the 20 bytes of
+ * the IP header.
+ *
+ * \return The IP header checksum of the IP header in the ip_buf
+ * buffer.
+ */
+uint16_t ip_ipchksum(void);
+
+/**
+ * Calculate the TCP checksum of the packet in ip_buf and ip_appdata.
+ *
+ * The TCP checksum is the Internet checksum of data contents of the
+ * TCP segment, and a pseudo-header as defined in RFC793.
+ *
+ * \return The TCP checksum of the TCP segment in ip_buf and pointed
+ * to by ip_appdata.
+ */
+uint16_t ip_tcpchksum(void);
+
+/**
+ * Calculate the UDP checksum of the packet in ip_buf and ip_appdata.
+ *
+ * The UDP checksum is the Internet checksum of data contents of the
+ * UDP segment, and a pseudo-header as defined in RFC768.
+ *
+ * \return The UDP checksum of the UDP segment in ip_buf and pointed
+ * to by ip_appdata.
+ */
+uint16_t ip_udpchksum(void);
 
 
 #endif /*IP_H*/
