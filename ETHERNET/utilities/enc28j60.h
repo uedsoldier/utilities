@@ -2,6 +2,7 @@
 #define ENC28J60_H
 
 #include <stdio.h>
+#include <stdbool.h>
 
 // ENC28J60 Control Registers
 // Control register definitions are a combination of address,
@@ -236,9 +237,28 @@
 // stp TX buffer at end of mem
 #define TXSTOP_INIT      0x1FFF
 //
-// max frame length which the conroller will accept:
+// max frame length which the controller will accept:
 #define        MAX_FRAMELEN        1500        // (note: maximum ethernet frame length would be 1518)
 //#define MAX_FRAMELEN     600
+
+
+#define IP_RECEIVEBUFFERHANDLE 0xFF
+
+#define IP_SENDBUFFER_PADDING 7
+#define IP_SENDBUFFER_OFFSET 1
+
+#define TX_COLLISION_RETRY_COUNT 3
+
+//#define ENC28J60DEBUG
+
+
+typedef struct {
+    bool spiInitialized;
+    uint16_t nextPacketPtr;
+    uint8_t bank;
+    struct memblock receivePkt;
+} Enc28j60_t;
+
 
 
 #endif /*ENC28J60_H*/
