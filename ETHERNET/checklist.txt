@@ -1,6 +1,6 @@
 utilities:
-    Enc28j60Network.c
-    Enc28j60Network.h
+    Enc28j60Network.c renombrado a enc28j60.c
+    Enc28j60Network.h movido a enc28j60.h OK
     enc28j60.h OK
     mempool.c OK
     mempool.h OK
@@ -14,7 +14,21 @@ utilities:
     ipethernet-conf.h OK
     ipopt.h OK
     util.h OK
-    
+dhcp.c
+dhcp.h
+dns.c
+dns.h
+ethernet.c
+ethernet.h
+ethernet_client.c
+ethernet_client.h
+ethernet_enc.h
+ethernet_server.c
+ethernet_server.h
+ethernet_udp.c
+ethernet_udp.h
+
+
     
     
     

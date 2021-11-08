@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include "mempool.h"
 
 // ENC28J60 Control Registers
 // Control register definitions are a combination of address,
@@ -260,5 +261,41 @@ typedef struct {
 } Enc28j60_t;
 
 
+// Funciones "privadas"
+static uint8_t ENC28J60_readOp(uint8_t op, uint8_t address);
+static void ENC28J60_writeOp(uint8_t op, uint8_t address, uint8_t data);
+static uint16_t ENC28J60_setReadPtr(memhandle handle, memaddress position, uint16_t len);
+static void ENC28J60_setERXRDPT();
+static void ENC28J60_readBuffer(uint16_t len, uint8_t* data);
+static void ENC28J60_writeBuffer(uint16_t len, uint8_t* data);
+static uint8_t ENC28J60_readByte(uint16_t addr);
+static void ENC28J60_writeByte(uint16_t addr, uint8_t data);
+static void ENC28J60_setBank(uint8_t address);
+static uint8_t ENC28J60_readReg(uint8_t address);
+static void ENC28J60_writeReg(uint8_t address, uint8_t data);
+static void ENC28J60_writeRegPair(uint8_t address, uint16_t data);
+static void ENC28J60_phyWrite(uint8_t address, uint16_t data);
+static uint16_t ENC28J60_phyRead(uint8_t address);
+static void ENC28J60_clkout(uint8_t clk);
+
+void ENC28J60_mempool_block_move_callback(memaddress,memaddress,memaddress);
+
+// Funciones "publicas"
+static uint8_t ENC28J60_getrev(void);
+static void ENC28J60_powerOn();
+static void ENC28J60_powerOff();
+static bool ENC28J60_linkStatus();
+
+//static void setCsPin(uint8_t _csPin) {csPin = _csPin;}
+static void ENC28J60_initSPI();
+static bool ENC28J60_init(uint8_t* macaddr);
+static memhandle ENC28J60_receivePacket();
+static void ENC28J60_freePacket();
+static memaddress ENC28J60_blockSize(memhandle handle);
+static bool ENC28J60_sendPacket(memhandle handle);
+static uint16_t ENC28J60_readPacket(memhandle handle, memaddress position, uint8_t* buffer, uint16_t len);
+static uint16_t ENC28J60_writePacket(memhandle handle, memaddress position, uint8_t* buffer, uint16_t len);
+static void ENC28J60_copyPacket(memhandle dest, memaddress dest_pos, memhandle src, memaddress src_pos, uint16_t len);
+static uint16_t ENC28J60_chksum(uint16_t sum, memhandle handle, memaddress pos, uint16_t len);
 
 #endif /*ENC28J60_H*/
