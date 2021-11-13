@@ -25,7 +25,7 @@
 typedef IPV6_address_t IP_address
 #else /* IP_CONF_IPV6 */
 typedef IPV4_address_t IP_address
-#define IP_ADDRESS_NONE 0x00000000
+#define IP_ADDRESS_NONE IPV4_ADDRESS_NONE
 #endif
 
 /**

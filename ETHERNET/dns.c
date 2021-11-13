@@ -163,17 +163,14 @@ uint16_t DNS_buildRequest(Dns *dns, const char* aName){
     const char* end =start;
     uint8_t len;
     // Run through the name being requested
-    while (*end)
-    {
+    while (*end) {
         // Find out how long this section of the name is
         end = start;
-        while (*end && (*end != '.') )
-        {
+        while (*end && (*end != '.') ) {
             end++;
         }
 
-        if (end-start > 0)
-        {
+        if (end-start > 0) {
             // Write out the size of this section
             len = end-start;
             iUdp.write(&len, sizeof(len));
