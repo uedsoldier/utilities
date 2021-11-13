@@ -4,20 +4,20 @@ utilities:
     enc28j60.h OK
     mempool.c OK
     mempool.h OK
-    mempool_conf.h OK
-    ip-conf.h OK
-    ip.c OK
-    ip.h OK
-    ip_arch.h OK
-    ip_arp.c OK
-    ip_arp.h OK
-    ipethernet-conf.h OK
-    ipopt.h OK
-    util.h OK
-dhcp.c
-dhcp.h
-dns.c
-dns.h
+    mempool_conf.h      OK
+    ip-conf.h           OK
+    ip.c                OK
+    ip.h                OK
+    ip_arch.h           OK
+    ip_arp.c            OK
+    ip_arp.h            OK
+    ipethernet-conf.h   OK
+    ipopt.h             OK
+    util.h              OK
+dhcp.c                  OK sin UDP
+dhcp.h                  OK sin UDP
+dns.c                   OK sin UDP
+dns.h                   OK sin UDP
 ethernet.c
 ethernet.h
 ethernet_client.c

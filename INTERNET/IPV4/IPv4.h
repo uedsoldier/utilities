@@ -14,6 +14,8 @@
 #define IPV4_BYTE_COUNT     4
 #define IPV4_STRING_SEPARATOR   '.'
 
+#define IPV4_ADDRESS_NONE   0x00000000
+
 /**
 * @brief Definición de estructura de datos para direccionamiento IPv4
 */

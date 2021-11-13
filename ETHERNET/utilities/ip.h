@@ -22,9 +22,10 @@
 */
 #if IP_CONF_IPV6
 // TODO
-typedef IPV6_address_t ipaddr_t
+typedef IPV6_address_t IP_address
 #else /* IP_CONF_IPV6 */
-typedef IPV4_address_t ipaddr_t
+typedef IPV4_address_t IP_address
+#define IP_ADDRESS_NONE 0x00000000
 #endif
 
 /**
@@ -35,12 +36,12 @@ typedef IPV4_address_t ipaddr_t
  *
  * Example:
    \code
-   ipaddr_t addr;
+   IP_address addr;
    ip_ipaddr(&addr, 192,168,1,2);
    ip_sethostaddr(&addr);
 
    \endcode
- * @param addr A pointer to an IP address of type ipaddr_t;
+ * @param addr A pointer to an IP address of type IP_address;
  */
 #define ip_sethostaddr(addr) ip_ipaddr_copy(ip_hostaddr, (addr))
 
@@ -52,10 +53,10 @@ typedef IPV4_address_t ipaddr_t
  *
  * Example:
     \code
-    ipaddr_t hostaddr;
+    IP_address hostaddr;
     ip_gethostaddr(&hostaddr);
     \endcode
- * @param addr A pointer to a ipaddr_t variable that will be
+ * @param addr A pointer to a IP_address variable that will be
  * filled in with the currently configured IP address.
  */
 #define ip_gethostaddr(addr) ip_ipaddr_copy((addr), ip_hostaddr)
@@ -63,38 +64,38 @@ typedef IPV4_address_t ipaddr_t
 /**
  * @brief Set the default router's IP address.
  *
- * @param addr A pointer to a ipaddr_t variable containing the IP
+ * @param addr A pointer to a IP_address variable containing the IP
  * address of the default router.
  */
 #define ip_setdraddr(addr) ip_ipaddr_copy(ip_draddr, (addr))
 
 /**
  * @brief Set the netmask.
- * @param addr A pointer to a ipaddr_t variable containing the IP
+ * @param addr A pointer to a IP_address variable containing the IP
  * address of the netmask.
  */
 #define ip_setnetmask(addr) ip_ipaddr_copy(ip_netmask, (addr))
 
 /**
  * @brief Get the default router's IP address.
- * @param addr A pointer to a ipaddr_t variable that will be
+ * @param addr A pointer to a IP_address variable that will be
  * filled in with the IP address of the default router.
  */
 #define ip_getdraddr(addr) ip_ipaddr_copy((addr), ip_draddr)
 
 /**
  * @brief Get the netmask.
- * @param addr A pointer to a ipaddr_t variable that will be
+ * @param addr A pointer to a IP_address variable that will be
  * filled in with the value of the netmask.
  */
 #define ip_getnetmask(addr) ip_ipaddr_copy((addr), ip_netmask)
 
-    /**
+   /**
  * @brief IP initialization function.
  * This function should be called at boot up to initilize the IP
  * TCP/IP stack.
  */
-   void ip_init(void);
+void ip_init(void);
 
 /**
  * IP initialization function.
@@ -373,7 +374,7 @@ void ip_unlisten(uint16_t port);
  * byte order, a conversion using HTONS() or htons() is necessary.
  *
    \code
-   ipaddr_t ipaddr;
+   IP_address ipaddr;
    ip_ipaddr(&ipaddr, 192,168,1,2);
    ip_connect(&ipaddr, HTONS(80));
    \endcode
@@ -386,7 +387,7 @@ void ip_unlisten(uint16_t port);
  * or NULL if no connection could be allocated.
  *
  */
-struct ip_conn *ip_connect(ipaddr_t *ripaddr, uint16_t port);
+struct ip_conn *ip_connect(IP_address *ripaddr, uint16_t port);
 
 /**
  * \internal
@@ -638,7 +639,7 @@ void ip_send(const void *data, int len);
  *
  * Example:
     \code
-    ipaddr_t addr;
+    IP_address addr;
     struct ip_udp_conn *c;
 
     ip_ipaddr(&addr, 192,168,2,1);
@@ -654,7 +655,7 @@ void ip_send(const void *data, int len);
  * \return The ip_udp_conn structure for the new connection or NULL
  * if no connection could be allocated.
  */
-struct ip_udp_conn *ip_udp_new(ipaddr_t *ripaddr, uint16_t rport);
+struct ip_udp_conn *ip_udp_new(IP_address *ripaddr, uint16_t rport);
 
 /**
  * Removed a UDP connection.
@@ -746,7 +747,7 @@ extern uint16_t ip_urglen, ip_surglen;
  */
 struct ip_conn
 {
-   ipaddr_t ripaddr; /**< The IP address of the remote host. */
+   IP_address ripaddr; /**< The IP address of the remote host. */
 
    uint16_t lport; /**< The local TCP port, in network byte order. */
    uint16_t rport; /**< The local remote TCP port, in network byte
@@ -796,7 +797,7 @@ extern uint8_t ip_acc32[4];
  */
 struct ip_udp_conn
 {
-   ipaddr_t ripaddr; /**< The IP address of the remote peer. */
+   IP_address ripaddr; /**< The IP address of the remote peer. */
    uint16_t lport;   /**< The local port number in network byte order. */
    uint16_t rport;   /**< The remote port number in network byte order. */
    uint8_t ttl;      /**< Default time-to-live. */
@@ -1097,10 +1098,10 @@ struct ip_udpip_hdr
  */
 #define IP_APPDATA_SIZE (IP_BUFSIZE - IP_LLH_LEN - IP_TCPIP_HLEN)
 
-#define IP_PROTO_ICMP 1
-#define IP_PROTO_TCP 6
-#define IP_PROTO_UDP 17
-#define IP_PROTO_ICMP6 58
+#define IP_PROTO_ICMP   1
+#define IP_PROTO_TCP    6
+#define IP_PROTO_UDP    17
+#define IP_PROTO_ICMP6  58
 
 /* Header sizes. */
 #if IP_CONF_IPV6
@@ -1110,18 +1111,14 @@ struct ip_udpip_hdr
 #endif                                           /* IP_CONF_IPV6 */
 #define IP_UDPH_LEN 8                            /* Size of UDP header */
 #define IP_TCPH_LEN 20                           /* Size of TCP header */
-#define IP_IPUDPH_LEN (IP_UDPH_LEN + IP_IPH_LEN) /* Size of IP + \
-                    UDP                                          \
-                    header */
-#define IP_IPTCPH_LEN (IP_TCPH_LEN + IP_IPH_LEN) /* Size of IP + \
-                    TCP                                          \
-                    header */
+#define IP_IPUDPH_LEN (IP_UDPH_LEN + IP_IPH_LEN) /* Size of IP + UDP header */
+#define IP_IPTCPH_LEN (IP_TCPH_LEN + IP_IPH_LEN) /* Size of IP + TCP header */
 #define IP_TCPIP_HLEN IP_IPTCPH_LEN
 
 #if IP_FIXEDADDR
-extern const ipaddr_t ip_hostaddr, ip_netmask, ip_draddr;
+extern const IP_address ip_hostaddr, ip_netmask, ip_draddr;
 #else  /* IP_FIXEDADDR */
-extern ipaddr_t ip_hostaddr, ip_netmask, ip_draddr;
+extern IP_address ip_hostaddr, ip_netmask, ip_draddr;
 #endif /* IP_FIXEDADDR */
 
 /**

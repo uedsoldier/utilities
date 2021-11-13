@@ -15,24 +15,24 @@
  * Definición de variables
 */
 #if IP_FIXEDADDR > 0
-const ipaddr_t ip_hostaddr = {HTONS((IP_IPADDR0 << 8) | IP_IPADDR1), HTONS((IP_IPADDR2 << 8) | IP_IPADDR3)};
-const ipaddr_t ip_draddr =
+const IP_address ip_hostaddr = {HTONS((IP_IPADDR0 << 8) | IP_IPADDR1), HTONS((IP_IPADDR2 << 8) | IP_IPADDR3)};
+const IP_address ip_draddr =
   {HTONS((IP_DRIPADDR0 << 8) | IP_DRIPADDR1),
    HTONS((IP_DRIPADDR2 << 8) | IP_DRIPADDR3)};
-const ipaddr_t ip_netmask =
+const IP_address ip_netmask =
   {HTONS((IP_NETMASK0 << 8) | IP_NETMASK1),
    HTONS((IP_NETMASK2 << 8) | IP_NETMASK3)};
 #else
-ipaddr_t ip_hostaddr, ip_draddr, ip_netmask;
+IP_address ip_hostaddr, ip_draddr, ip_netmask;
 #endif /* IP_FIXEDADDR */
 
-static const ipaddr_t all_ones_addr =
+static const IP_address all_ones_addr =
 #if IP_CONF_IPV6
   {0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff};
 #else /* IP_CONF_IPV6 */
   {0xffff,0xffff};
 #endif /* IP_CONF_IPV6 */
-static const ipaddr_t all_zeroes_addr =
+static const IP_address all_zeroes_addr =
 #if IP_CONF_IPV6
   {0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000};
 #else /* IP_CONF_IPV6 */
@@ -258,7 +258,7 @@ upper_layer_chksum(uint8_t proto)
   /* IP protocol and length fields. This addition cannot carry. */
   sum = upper_layer_len + proto;
   /* Sum IP source and destination addresses. */
-  sum = chksum(sum, (uint8_t *)&BUF->srcipaddr[0], 2 * sizeof(ipaddr_t));
+  sum = chksum(sum, (uint8_t *)&BUF->srcipaddr[0], 2 * sizeof(IP_address));
 
   /* Sum TCP header and data. */
   sum = chksum(sum, &ip_buf[IP_IPH_LEN + IP_LLH_LEN],
@@ -320,7 +320,7 @@ ip_init(void)
 /*---------------------------------------------------------------------------*/
 #if IP_ACTIVE_OPEN
 struct ip_conn *
-ip_connect(ipaddr_t *ripaddr, uint16_t rport)
+ip_connect(IP_address *ripaddr, uint16_t rport)
 {
   register struct ip_conn *conn, *cconn;
   
@@ -386,7 +386,7 @@ ip_connect(ipaddr_t *ripaddr, uint16_t rport)
 /*---------------------------------------------------------------------------*/
 #if IP_UDP
 struct ip_udp_conn *
-ip_udp_new(ipaddr_t *ripaddr, uint16_t rport)
+ip_udp_new(IP_address *ripaddr, uint16_t rport)
 {
   register struct ip_udp_conn *conn;
   
@@ -420,7 +420,7 @@ ip_udp_new(ipaddr_t *ripaddr, uint16_t rport)
   conn->lport = HTONS(lastport);
   conn->rport = rport;
   if(ripaddr == NULL) {
-    memset(&conn->ripaddr, 0, sizeof(ipaddr_t));
+    memset(&conn->ripaddr, 0, sizeof(IP_address));
   } else {
     ip_ipaddr_copy(&conn->ripaddr, ripaddr);
   }
