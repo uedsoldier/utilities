@@ -20,13 +20,13 @@ dns.c                   OK sin UDP
 dns.h                   OK sin UDP
 ethernet.c              en proceso
 ethernet.h              en proceso    
-ethernet_client.c
-ethernet_client.h
-ethernet_enc.h
-ethernet_server.c
-ethernet_server.h
-ethernet_udp.c
-ethernet_udp.h
+ethernet_client.c       en proceso  
+ethernet_client.h       en proceso  
+ethernet_enc.h          en proceso  
+ethernet_server.c       en proceso  
+ethernet_server.h       en proceso  
+ethernet_udp.c          en proceso  
+ethernet_udp.h          en proceso  
 
 
     
