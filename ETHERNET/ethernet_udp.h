@@ -11,23 +11,26 @@
 #define IP_UDP_PHYH_LEN IP_LLH_LEN + IP_IPUDPH_LEN
 #define IP_UDP_MAXPACKETSIZE IP_UDP_MAXDATALEN + IP_UDP_PHYH_LEN
 
-typedef struct {
-	memhandle packet = NOBLOCK;
+typedef struct
+{
+	memhandle packet;
 	IP_address remote_ip;
-	uint16_t remote_port = 0;
+	uint16_t remote_port;
 } uip_udp_msg_rec_t;
 
-typedef struct {
+typedef struct
+{
 	memaddress out_pos;
 	uip_udp_msg_rec_t packet_next[IP_UDP_BACKLOG];
-	memhandle packet_in = NOBLOCK;
-	memhandle packet_out = NOBLOCK;
+	memhandle packet_in;
+	memhandle packet_out;
 	bool send;
 	IP_address remote_ip;
-	uint16_t remote_port = 0;
+	uint16_t remote_port;
 } uip_udp_userdata_t;
 
-class EthernetUDP : public UDP {
+class EthernetUDP : public UDP
+{
 
 private:
 	struct uip_udp_conn *_uip_udp_conn;
