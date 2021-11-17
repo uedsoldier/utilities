@@ -2,7 +2,7 @@
 
 #define POOLOFFSET 1
 
-struct memblock MemoryPool_blocks[MEMPOOL_NUM_MEMBLOCKS+1];
+memblock_t MemoryPool_blocks[MEMPOOL_NUM_MEMBLOCKS+1];
 
 /**
  * @brief 
@@ -24,9 +24,9 @@ void MemoryPool_init(MemoryPool *mp) {
  * @return memhandle 
  */
 memhandle MemoryPool_allocBlock(MemoryPool *mp, memaddress size) {
-    memblock *best = NULL;
+    memblock_t *best = NULL;
     memhandle cur = POOLSTART;
-    memblock* block = &mp->blocks[POOLSTART];
+    memblock_t *block = &mp->blocks[POOLSTART];
     memaddress bestsize = MEMPOOL_SIZE + 1;
 
     do {
@@ -58,7 +58,7 @@ memhandle MemoryPool_allocBlock(MemoryPool *mp, memaddress size) {
         while ((next = block->nextblock) != NOBLOCK)
         {
             memaddress dest = block->begin + block->size;
-            memblock* nextblock = &mp->blocks[next];
+            memblock_t* nextblock = &mp->blocks[next];
             memaddress* src = &nextblock->begin;
             if (dest != *src)
             {
@@ -108,12 +108,12 @@ memhandle MemoryPool_allocBlock(MemoryPool *mp, memaddress size) {
 void MemoryPool_freeBlock(MemoryPool *mp, memhandle handle) {
     if (handle == NOBLOCK)
         return;
-    memblock *b = &mp->blocks[POOLSTART];
+    memblock_t *b = &mp->blocks[POOLSTART];
 
     do {
         memhandle next = b->nextblock;
         if (next == handle) {
-            memblock *f = &mp->blocks[next];
+            memblock_t *f = &mp->blocks[next];
     #ifdef MEMBLOCK_FREE
             MEMBLOCK_FREE(f->begin,f->size);
     #endif
@@ -130,7 +130,7 @@ void MemoryPool_freeBlock(MemoryPool *mp, memhandle handle) {
 }
 
 void MemoryPool_resizeBlock(MemoryPool *mp, memhandle handle, memaddress position, memaddress size) {
-    memblock *block = mp->blocks[handle];
+    memblock_t *block = &mp->blocks[handle]; // se agrego &
     block->begin += position;
     block->size = size;
 }

@@ -1,3 +1,13 @@
+/**
+ * @file enc28j60.h
+ * @author José Roberto Parra Trewartha (uedsoldier1990@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2021-11-16
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 #ifndef ENC28J60_H
 #define ENC28J60_H
 
@@ -257,45 +267,46 @@ typedef struct {
     bool spiInitialized;
     uint16_t nextPacketPtr;
     uint8_t bank;
-    struct memblock receivePkt;
+    memblock_t receivePkt;
+    //spi_t spi;
 } Enc28j60_t;
 
 
 // Funciones "privadas"
-static uint8_t ENC28J60_readOp(uint8_t op, uint8_t address);
-static void ENC28J60_writeOp(uint8_t op, uint8_t address, uint8_t data);
-static uint16_t ENC28J60_setReadPtr(memhandle handle, memaddress position, uint16_t len);
-static void ENC28J60_setERXRDPT();
-static void ENC28J60_readBuffer(uint16_t len, uint8_t* data);
-static void ENC28J60_writeBuffer(uint16_t len, uint8_t* data);
-static uint8_t ENC28J60_readByte(uint16_t addr);
-static void ENC28J60_writeByte(uint16_t addr, uint8_t data);
-static void ENC28J60_setBank(uint8_t address);
-static uint8_t ENC28J60_readReg(uint8_t address);
-static void ENC28J60_writeReg(uint8_t address, uint8_t data);
-static void ENC28J60_writeRegPair(uint8_t address, uint16_t data);
-static void ENC28J60_phyWrite(uint8_t address, uint16_t data);
-static uint16_t ENC28J60_phyRead(uint8_t address);
-static void ENC28J60_clkout(uint8_t clk);
+static uint8_t ENC28J60_readOp(Enc28j60_t *enc28j60, uint8_t op, uint8_t address);
+static void ENC28J60_writeOp(Enc28j60_t *enc28j60, uint8_t op, uint8_t address, uint8_t data);
+static uint16_t ENC28J60_setReadPtr(Enc28j60_t *enc28j60, memhandle handle, memaddress position, uint16_t len);
+static void ENC28J60_setERXRDPT(Enc28j60_t *enc28j60 );
+static void ENC28J60_readBuffer(Enc28j60_t *enc28j60, uint16_t len, uint8_t* data);
+static void ENC28J60_writeBuffer(Enc28j60_t *enc28j60, uint16_t len, uint8_t* data);
+static uint8_t ENC28J60_readByte(Enc28j60_t *enc28j60, uint16_t addr);
+static void ENC28J60_writeByte(Enc28j60_t *enc28j60, uint16_t addr, uint8_t data);
+static void ENC28J60_setBank(Enc28j60_t *enc28j60, uint8_t address);
+static uint8_t ENC28J60_readReg(Enc28j60_t *enc28j60, uint8_t address);
+static void ENC28J60_writeReg(Enc28j60_t *enc28j60, uint8_t address, uint8_t data);
+static void ENC28J60_writeRegPair(Enc28j60_t *enc28j60, uint8_t address, uint16_t data);
+static void ENC28J60_phyWrite(Enc28j60_t *enc28j60, uint8_t address, uint16_t data);
+static uint16_t ENC28J60_phyRead(Enc28j60_t *enc28j60, uint8_t address);
+static void ENC28J60_clkout(Enc28j60_t *enc28j60, uint8_t clk);
 
-void ENC28J60_mempool_block_move_callback(memaddress,memaddress,memaddress);
+void ENC28J60_mempool_block_move_callback(Enc28j60_t *enc28j60, memaddress,memaddress,memaddress);
 
 // Funciones "publicas"
-static uint8_t ENC28J60_getrev(void);
-static void ENC28J60_powerOn();
-static void ENC28J60_powerOff();
-static bool ENC28J60_linkStatus();
+uint8_t ENC28J60_getrev(Enc28j60_t *enc28j60);
+void ENC28J60_powerOn(Enc28j60_t *enc28j60 );
+void ENC28J60_powerOff(Enc28j60_t *enc28j60 );
+bool ENC28J60_linkStatus(Enc28j60_t *enc28j60 );
 
-//static void setCsPin(uint8_t _csPin) {csPin = _csPin;}
-static void ENC28J60_initSPI();
-static bool ENC28J60_init(uint8_t* macaddr);
-static memhandle ENC28J60_receivePacket();
-static void ENC28J60_freePacket();
-static memaddress ENC28J60_blockSize(memhandle handle);
-static bool ENC28J60_sendPacket(memhandle handle);
-static uint16_t ENC28J60_readPacket(memhandle handle, memaddress position, uint8_t* buffer, uint16_t len);
-static uint16_t ENC28J60_writePacket(memhandle handle, memaddress position, uint8_t* buffer, uint16_t len);
-static void ENC28J60_copyPacket(memhandle dest, memaddress dest_pos, memhandle src, memaddress src_pos, uint16_t len);
-static uint16_t ENC28J60_chksum(uint16_t sum, memhandle handle, memaddress pos, uint16_t len);
+//void setCsPin(uint8_t _csPin) {csPin = _csPin;}
+void ENC28J60_initSPI(Enc28j60_t *enc28j60);
+bool ENC28J60_init(Enc28j60_t *enc28j60, uint8_t* macaddr);
+memhandle ENC28J60_receivePacket(Enc28j60_t *enc28j60 );
+void ENC28J60_freePacket(Enc28j60_t *enc28j60 );
+memaddress ENC28J60_blockSize(Enc28j60_t *enc28j60, memhandle handle);
+bool ENC28J60_sendPacket(Enc28j60_t *enc28j60, memhandle handle);
+uint16_t ENC28J60_readPacket(Enc28j60_t *enc28j60, memhandle handle, memaddress position, uint8_t* buffer, uint16_t len);
+uint16_t ENC28J60_writePacket(Enc28j60_t *enc28j60, memhandle handle, memaddress position, uint8_t* buffer, uint16_t len);
+void ENC28J60_copyPacket(Enc28j60_t *enc28j60, memhandle dest, memaddress dest_pos, memhandle src, memaddress src_pos, uint16_t len);
+uint16_t ENC28J60_chksum(Enc28j60_t *enc28j60, uint16_t sum, memhandle handle, memaddress pos, uint16_t len);
 
 #endif /*ENC28J60_H*/

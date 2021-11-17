@@ -7,7 +7,7 @@
 extern struct ip_eth_addr ip_ethaddr;
 
 /**
- * The Ethernet header.
+ * @brief  The Ethernet header.
  */
 struct ip_eth_hdr {
   struct ip_eth_addr dest;

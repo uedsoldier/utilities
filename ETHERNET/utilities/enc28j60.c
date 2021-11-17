@@ -3,9 +3,9 @@
 #include "enc28j60.h"
 #include "ip.h"
 
-struct memblock receivePkt;
+memblock_t receivePkt;
 
-void ENC28J60_initSPI() {
+void ENC28J60_initSPI(Enc28j60_t *enc28j60) {
     if (spiInitialized)
         return;
     pinMode(csPin, OUTPUT);
@@ -14,9 +14,7 @@ void ENC28J60_initSPI() {
     spiInitialized = true;
 }
 
-bool ENC28J60_init(uint8_t *macaddr)
-{
-
+bool ENC28J60_init(Enc28j60_t *enc28j60, uint8_t *macaddr) {
     MemoryPool::init(); // 1 byte in between RX_STOP_INIT and pool to allow prepending of controlbyte
 
     initSPI();
@@ -97,9 +95,7 @@ bool ENC28J60_init(uint8_t *macaddr)
     return getrev();
 }
 
-memhandle
-ENC28J60_receivePacket()
-{
+memhandle ENC28J60_receivePacket(Enc28j60_t *enc28j60) {
     uint8_t rxstat;
     uint16_t len;
 
@@ -157,19 +153,19 @@ ENC28J60_receivePacket()
     return (NOBLOCK);
 }
 
-void ENC28J60_setERXRDPT()
+void ENC28J60_setERXRDPT(Enc28j60_t *enc28j60)
 {
     writeRegPair(ERXRDPTL, nextPacketPtr == RXSTART_INIT ? RXSTOP_INIT : nextPacketPtr - 1);
 }
 
 memaddress
-ENC28J60_blockSize(memhandle handle)
+ENC28J60_blockSize(Enc28j60_t *enc28j60, memhandle handle)
 {
     return handle == NOBLOCK ? 0 : handle == UIP_RECEIVEBUFFERHANDLE ? receivePkt.size
                                                                      : blocks[handle].size;
 }
 
-bool ENC28J60_sendPacket(memhandle handle)
+bool ENC28J60_sendPacket(Enc28j60_t *enc28j60, memhandle handle)
 {
     memblock *packet = &blocks[handle];
     uint16_t start = packet->begin;                                   // includes the UIP_SENDBUFFER_OFFSET for control byte
@@ -233,7 +229,7 @@ bool ENC28J60_sendPacket(memhandle handle)
 }
 
 uint16_t
-ENC28J60_setReadPtr(memhandle handle, memaddress position, uint16_t len)
+ENC28J60_setReadPtr(Enc28j60_t *enc28j60, memhandle handle, memaddress position, uint16_t len)
 {
     memblock *packet = handle == UIP_RECEIVEBUFFERHANDLE ? &receivePkt : &blocks[handle];
     memaddress start = handle == UIP_RECEIVEBUFFERHANDLE && packet->begin + position > RXSTOP_INIT ? packet->begin + position - ((RXSTOP_INIT + 1) - RXSTART_INIT) : packet->begin + position;
@@ -246,7 +242,7 @@ ENC28J60_setReadPtr(memhandle handle, memaddress position, uint16_t len)
 }
 
 uint16_t
-ENC28J60_readPacket(memhandle handle, memaddress position, uint8_t *buffer, uint16_t len)
+ENC28J60_readPacket(Enc28j60_t *enc28j60, memhandle handle, memaddress position, uint8_t *buffer, uint16_t len)
 {
     SPI.beginTransaction(SPI_ETHERNET_SETTINGS);
     len = setReadPtr(handle, position, len);
@@ -256,7 +252,7 @@ ENC28J60_readPacket(memhandle handle, memaddress position, uint8_t *buffer, uint
 }
 
 uint16_t
-ENC28J60_writePacket(memhandle handle, memaddress position, uint8_t *buffer, uint16_t len)
+ENC28J60_writePacket(Enc28j60_t *enc28j60, memhandle handle, memaddress position, uint8_t *buffer, uint16_t len)
 {
     memblock *packet = &blocks[handle];
     uint16_t start = packet->begin + position;
@@ -273,7 +269,7 @@ ENC28J60_writePacket(memhandle handle, memaddress position, uint8_t *buffer, uin
     return len;
 }
 
-uint8_t ENC28J60_readByte(uint16_t addr)
+uint8_t ENC28J60_readByte(Enc28j60_t *enc28j60, uint16_t addr)
 {
     writeRegPair(ERDPTL, addr);
 
@@ -286,7 +282,7 @@ uint8_t ENC28J60_readByte(uint16_t addr)
     return c;
 }
 
-void ENC28J60_writeByte(uint16_t addr, uint8_t data)
+void ENC28J60_writeByte(Enc28j60_t *enc28j60, uint16_t addr, uint8_t data)
 {
     writeRegPair(EWRPTL, addr);
 
@@ -298,7 +294,7 @@ void ENC28J60_writeByte(uint16_t addr, uint8_t data)
     CSPASSIVE;
 }
 
-void ENC28J60_copyPacket(memhandle dest_pkt, memaddress dest_pos, memhandle src_pkt, memaddress src_pos, uint16_t len)
+void ENC28J60_copyPacket(Enc28j60_t *enc28j60, memhandle dest_pkt, memaddress dest_pos, memhandle src_pkt, memaddress src_pos, uint16_t len)
 {
     memblock *dest = &blocks[dest_pkt];
     memblock *src = src_pkt == UIP_RECEIVEBUFFERHANDLE ? &receivePkt : &blocks[src_pkt];
@@ -307,7 +303,7 @@ void ENC28J60_copyPacket(memhandle dest_pkt, memaddress dest_pos, memhandle src_
     // setERXRDPT(); let it to freePacket after all packets are saved
 }
 
-void enc28J60_mempool_block_move_callback(memaddress dest, memaddress src, memaddress len)
+void enc28J60_mempool_block_move_callback(Enc28j60_t *enc28j60, memaddress dest, memaddress src, memaddress len)
 {
     //void
     //ENC28J60_memblock_mv_cb(uint16_t dest, uint16_t src, uint16_t len)
@@ -363,7 +359,7 @@ void enc28J60_mempool_block_move_callback(memaddress dest, memaddress src, memad
     SPI.endTransaction();
 }
 
-void ENC28J60_freePacket()
+void ENC28J60_freePacket(Enc28j60_t *enc28j60)
 {
     SPI.beginTransaction(SPI_ETHERNET_SETTINGS);
     setERXRDPT();
@@ -371,7 +367,7 @@ void ENC28J60_freePacket()
 }
 
 uint8_t
-ENC28J60_readOp(uint8_t op, uint8_t address)
+ENC28J60_readOp(Enc28j60_t *enc28j60, uint8_t op, uint8_t address)
 {
     CSACTIVE;
     // issue read command
@@ -387,7 +383,7 @@ ENC28J60_readOp(uint8_t op, uint8_t address)
     return c;
 }
 
-void ENC28J60_writeOp(uint8_t op, uint8_t address, uint8_t data)
+void ENC28J60_writeOp(Enc28j60_t *enc28j60, uint8_t op, uint8_t address, uint8_t data)
 {
     CSACTIVE;
     // issue write command
@@ -397,7 +393,7 @@ void ENC28J60_writeOp(uint8_t op, uint8_t address, uint8_t data)
     CSPASSIVE;
 }
 
-void ENC28J60_readBuffer(uint16_t len, uint8_t *data)
+void ENC28J60_readBuffer(Enc28j60_t *enc28j60, uint16_t len, uint8_t *data)
 {
     CSACTIVE;
     // issue read command
@@ -413,7 +409,7 @@ void ENC28J60_readBuffer(uint16_t len, uint8_t *data)
     CSPASSIVE;
 }
 
-void ENC28J60_writeBuffer(uint16_t len, uint8_t *data)
+void ENC28J60_writeBuffer(Enc28j60_t *enc28j60, uint16_t len, uint8_t *data)
 {
     CSACTIVE;
     // issue write command
@@ -428,7 +424,7 @@ void ENC28J60_writeBuffer(uint16_t len, uint8_t *data)
     CSPASSIVE;
 }
 
-void ENC28J60_setBank(uint8_t address)
+void ENC28J60_setBank(Enc28j60_t *enc28j60, uint8_t address)
 {
     // set the bank (if needed)
     if ((address & BANK_MASK) != bank)
@@ -441,7 +437,7 @@ void ENC28J60_setBank(uint8_t address)
 }
 
 uint8_t
-ENC28J60_readReg(uint8_t address)
+ENC28J60_readReg(Enc28j60_t *enc28j60, uint8_t address)
 {
     // set the bank
     setBank(address);
@@ -449,7 +445,7 @@ ENC28J60_readReg(uint8_t address)
     return readOp(ENC28J60_READ_CTRL_REG, address);
 }
 
-void ENC28J60_writeReg(uint8_t address, uint8_t data)
+void ENC28J60_writeReg(Enc28j60_t *enc28j60, uint8_t address, uint8_t data)
 {
     // set the bank
     setBank(address);
@@ -457,7 +453,7 @@ void ENC28J60_writeReg(uint8_t address, uint8_t data)
     writeOp(ENC28J60_WRITE_CTRL_REG, address, data);
 }
 
-void ENC28J60_writeRegPair(uint8_t address, uint16_t data)
+void ENC28J60_writeRegPair(Enc28j60_t *enc28j60, uint8_t address, uint16_t data)
 {
     // set the bank
     setBank(address);
@@ -466,7 +462,7 @@ void ENC28J60_writeRegPair(uint8_t address, uint16_t data)
     writeOp(ENC28J60_WRITE_CTRL_REG, address + 1, (data) >> 8);
 }
 
-void ENC28J60_phyWrite(uint8_t address, uint16_t data)
+void ENC28J60_phyWrite(Enc28j60_t *enc28j60, uint8_t address, uint16_t data)
 {
     // set the PHY register address
     writeReg(MIREGADR, address);
@@ -480,7 +476,7 @@ void ENC28J60_phyWrite(uint8_t address, uint16_t data)
 }
 
 uint16_t
-ENC28J60_phyRead(uint8_t address)
+ENC28J60_phyRead(Enc28j60_t *enc28j60, uint8_t address)
 {
     writeReg(MIREGADR, address);
     writeReg(MICMD, MICMD_MIIRD);
@@ -493,7 +489,7 @@ ENC28J60_phyRead(uint8_t address)
     return (readReg(MIRDL) | readReg(MIRDH) << 8);
 }
 
-void ENC28J60_clkout(uint8_t clk)
+void ENC28J60_clkout(Enc28j60_t *enc28j60, uint8_t clk)
 {
     //setup clkout: 2 is 12.5MHz:
     writeReg(ECOCON, clk & 0x7);
@@ -501,7 +497,7 @@ void ENC28J60_clkout(uint8_t clk)
 
 // read the revision of the chip:
 uint8_t
-ENC28J60_getrev(void)
+ENC28J60_getrev(Enc28j60_t *enc28j60)
 {
     initSPI();
     SPI.beginTransaction(SPI_ETHERNET_SETTINGS);
@@ -515,7 +511,7 @@ ENC28J60_getrev(void)
 }
 
 uint16_t
-ENC28J60_chksum(uint16_t sum, memhandle handle, memaddress pos, uint16_t len)
+ENC28J60_chksum(Enc28j60_t *enc28j60, uint16_t sum, memhandle handle, memaddress pos, uint16_t len)
 {
     uint16_t t;
     SPI.beginTransaction(SPI_ETHERNET_SETTINGS);
@@ -551,7 +547,7 @@ ENC28J60_chksum(uint16_t sum, memhandle handle, memaddress pos, uint16_t len)
     return sum;
 }
 
-void ENC28J60_powerOff()
+void ENC28J60_powerOff(Enc28j60_t *enc28j60)
 {
     SPI.beginTransaction(SPI_ETHERNET_SETTINGS);
     writeOp(ENC28J60_BIT_FIELD_CLR, ECON1, ECON1_RXEN);
@@ -562,7 +558,7 @@ void ENC28J60_powerOff()
     SPI.endTransaction();
 }
 
-void ENC28J60_powerOn()
+void ENC28J60_powerOn(Enc28j60_t *enc28j60)
 {
     SPI.beginTransaction(SPI_ETHERNET_SETTINGS);
     writeOp(ENC28J60_BIT_FIELD_CLR, ECON2, ECON2_PWRSV);
@@ -572,7 +568,7 @@ void ENC28J60_powerOn()
     SPI.endTransaction();
 }
 
-bool ENC28J60_linkStatus()
+bool ENC28J60_linkStatus(Enc28j60_t *enc28j60)
 {
     SPI.beginTransaction(SPI_ETHERNET_SETTINGS);
     bool res = (phyRead(PHSTAT2) & 0x0400) > 0;

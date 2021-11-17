@@ -9,14 +9,14 @@
 
 #include "mempool_conf.h"
 
-struct memblock {
+typedef struct memblock {
     memaddress begin;
     memaddress size;
     memhandle nextblock;
-};
+} memblock_t;
 
 typedef struct {
-    struct memblock blocks[MEMPOOL_NUM_MEMBLOCKS+1]; 
+    memblock_t blocks[MEMPOOL_NUM_MEMBLOCKS+1]; 
 } MemoryPool;
 
 // Funciones
