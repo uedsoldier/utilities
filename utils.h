@@ -1,8 +1,12 @@
 /**
  * @file utils.h
- * @brief Librería de funciones, macros y utilidades en general para programación de microcontroladores PIC de 8 bits.
- * @author Ing. José Roberto Parra Trewartha
-*/
+ * @author Roberto Parra (uedsoldier1990@gmail.com)
+ * @brief Librería de funciones, macros y utilidades en general para programación de microcontroladores primordialmente
+ * de bajas prestaciones, aunque se puede adaptar a otros sin mayor detalle.
+ * @version 0.1
+ * @date 2022-03-28 
+ */
+
 #ifndef UTILS_H
 #define UTILS_H
 
@@ -235,6 +239,7 @@ uint24_t bit_invert_Int24(uint24_t dato_original);	// Inversión de bits en un d
 uint32_t bit_invert_Int32(uint32_t dato_original);	// Inversión de bits en un dato de 32 bits	
 uint8_t nibble_swap(uint8_t dato);					// Intercambio de nibbles dentro de un byte
 uint16_t byte_swap(uint16_t dato);                  // Intercambio de bytes dentro de un dato de 16 bits
+uint32_t word_swap(uint32_t dato);					// Intercambio de words dentro de un dato de 32 bits	
 
 //Conversión de datos
 
