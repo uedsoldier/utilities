@@ -7,12 +7,6 @@
  * @date 2022-03-28 
  */
 
-
-/**
- * @file utils.h
- * @brief 
- * @author Ing. José Roberto Parra Trewartha
-*/
 #ifndef UTILS_H
 #define UTILS_H
 
