@@ -23,6 +23,14 @@ typedef union IPV6_address {
     uint32_t ipv6_word;
 } IPV6_address_t;
 
+/**
+ * @brief 
+ * 
+ */
+typedef enum IPV6_error {
+    IPV6_NULL_STRING, IPV6_NULL_TOKEN, IPV6_NaN, IPV6_INVALID_NUMBER, IPV6_INVALID_ADDRESS, IPV6_ADDRESS_OK
+} IPV6_error_t;
+
 void IPV6_fromArray(IPV6_address_t *address, uint16_t *words);
 void array_fromIPV6(IPV6_address_t *address, uint16_t *words);
 void IPV6_fromString(IPV6_address_t *address, const char *string);
