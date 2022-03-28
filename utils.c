@@ -1,8 +1,12 @@
 /**
  * @file utils.c
- * @brief Librería de funciones, macros y utilidades en general para programación de microcontroladores PIC de 8 bits.
- * @author Ing. José Roberto Parra Trewartha
-*/
+ * @author Roberto Parra (uedsoldier1990@gmail.com)
+ * @brief Librería de funciones, macros y utilidades en general para programación de microcontroladores primordialmente
+ * de bajas prestaciones, aunque se puede adaptar a otros sin mayor detalle.
+ * @version 0.1
+ * @date 2022-03-28 
+ */
+
 #include "utils.h"
 
 /**
@@ -160,6 +164,15 @@ uint8_t nibble_swap(uint8_t dato) {
 */
 uint16_t byte_swap(uint16_t dato) {
 	return ((dato & (uint16_t)0xFF00) >> 8) | ((dato & (uint16_t)0x00FF) << 8);
+}
+
+/**
+ * @brief Función para la inversión de bytes dentro de una variable de 4 bytes
+ * @param dato (uint32_t) Variable de cuatro bytes cuyos words serán invertidos
+ * @return (uint32_t) Variable de dos cuatro con words invertidos
+*/
+uint32_t word_swap(uint32_t dato) {
+	return ((dato & (uint32_t)0xFFFF0000) >> 16) | ((dato & (uint32_t)0x0000FFFF) << 16);
 }
 
 
