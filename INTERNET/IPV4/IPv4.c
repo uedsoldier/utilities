@@ -1,23 +1,18 @@
 #include "IPv4.h"
 
 /**
+ * @brief 
  * 
- * @param address
- * @param bytes
+ * @param address 
+ * @param bytes 
+ * @return IPV4_error_t 
  */
-void IPV4_fromArray(IPV4_address_t *address, uint8_t *bytes){
-    #if IPV4_LOG
-    printf("IPv4 from array: ");
-    #endif
-    for(uint8_t i = 0; i != IPV4_BYTE_COUNT; i++){
-        address->ipv4_addr_array[i] = bytes[i];
-        #if IPV4_LOG
-        printf("%u%c",address->ipv4_addr_array[i],(i!=3)? IPV4_STRING_SEPARATOR:'\0'); 
-        #endif
+IPV4_error_t IPV4_fromArray(IPV4_address_t *address, uint8_t *bytes){
+    uint8_t j = 0;
+    for(uint8_t i = IPV4_BYTE_COUNT-1; i != 0; i--){
+        address->ipv4_addr_array[j++] = bytes[i];
     }
-    #if IPV4_LOG
-    printf("\n");
-    #endif
+    return IPV4_ADDRESS_OK;
     
 }
 
@@ -27,14 +22,8 @@ void IPV4_fromArray(IPV4_address_t *address, uint8_t *bytes){
  * @param bytes
  */
 void array_fromIPV4(IPV4_address_t *address, uint8_t *bytes){
-    #if IPV4_LOG
-    printf("Array from IPv4: ");
-    #endif
     for(uint8_t i = 0; i != IPV4_BYTE_COUNT; i++){
         bytes[i] = address->ipv4_addr_array[i];
-        #if IPV4_LOG
-        printf("%u%c",bytes[i],(i!=3)? IPV4_STRING_SEPARATOR:'\0'); 
-        #endif
     }
     #if IPV4_LOG
     printf("\n");
@@ -42,30 +31,47 @@ void array_fromIPV4(IPV4_address_t *address, uint8_t *bytes){
 }
 
 /**
+ * @brief 
  * 
- * @param address
- * @param string
+ * @param address 
+ * @param string 
+ * @return IPV4_error_t 
  */
-void IPV4_fromString(IPV4_address_t *address, const char *string){
+IPV4_error_t IPV4_fromString(IPV4_address_t *address, const char *string){
     char _str[20];
     memset(_str,0,sizeof(_str));
-    strcpy(_str,string);
-    #if IPV4_LOG
-    printf("IPv4 from string %s\n",string);
-    #endif
-    char *token = strtok(_str,".");
-    uint8_t index = 3;
-    while(token != NULL){
-        address->ipv4_addr_array[index] = atoi(token);
-        token = strtok(NULL,".");
-        #if IPV4_LOG
-        printf("%u%c",address->ipv4_addr_array[index],(index!=0)? IPV4_STRING_SEPARATOR:'\0'); 
-        #endif
-        index--;
+    memcpy(_str,string,strlen(string));
+    if(_str == NULL){
+        return IPV4_NULL_STRING;
     }
-    #if IPV4_LOG
-    printf("\n");
-    #endif
+    char *ptr;
+    uint8_t index = 3, dots = 0;
+    uint16_t num;
+    ptr = strtok(_str,".");
+    if(ptr == NULL){
+        return IPV4_NULL_TOKEN;
+    }
+    while(ptr != NULL){
+        if(!string_validate_int(ptr)){
+            return IPV4_NaN;
+        }
+        num = atoi(ptr);
+        if(num >= 0 && num <= 255){
+            ptr = strtok(NULL,".");
+            if(ptr != NULL){
+                dots++;
+            } 
+            address->ipv4_addr_array[index] = (uint8_t)num;
+            index --;
+            
+        } else{
+            return IPV4_INVALID_NUMBER;
+        }
+    }
+    if(dots != 3){
+        return IPV4_INVALID_ADDRESS;
+    }
+    return IPV4_ADDRESS_OK;
 }
 
 /**
@@ -75,13 +81,7 @@ void IPV4_fromString(IPV4_address_t *address, const char *string){
  */
 char *string_fromIPV4(IPV4_address_t *address){
     static char retString[20];
-    #if IPV4_LOG
-    printf("Make IPv4 string from IPv4: ");
-    #endif
     sprintf(retString,"%u%c%u%c%u%c%u",address->ipv4_bytes.b3,IPV4_STRING_SEPARATOR,address->ipv4_bytes.b2,IPV4_STRING_SEPARATOR,address->ipv4_bytes.b1,IPV4_STRING_SEPARATOR,address->ipv4_bytes.b0);
-    #if IPV4_LOG
-    printf("%s\n",retString);
-    #endif
     return retString;
 }
 
@@ -92,13 +92,7 @@ char *string_fromIPV4(IPV4_address_t *address){
  */
 char *IPV4_string_fromInt(uint32_t ip_int){
     static char retString[20];
-    #if IPV4_LOG
-    printf("Make IPv4 string from int: ");
-    #endif
     sprintf(retString,"%u%c%u%c%u%c%u",(uint8_t)((ip_int & 0xFF000000UL)>>24),IPV4_STRING_SEPARATOR,(uint8_t)((ip_int & 0xFF0000UL)>>16),IPV4_STRING_SEPARATOR,(uint8_t)((ip_int & 0xFF00UL)>>8),IPV4_STRING_SEPARATOR,(uint8_t)((ip_int) & 0xFFUL),IPV4_STRING_SEPARATOR);
-    #if IPV4_LOG
-    printf("%s\n",retString);
-    #endif
     return retString;
 }
 

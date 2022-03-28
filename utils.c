@@ -334,6 +334,23 @@ int16_t string_indexOf( const char *cadena_a_buscar, const char *cadena_principa
         return (int16_t)(apuntador_ocurrencia - cadena_principal);
 }   
 
+/**
+ * @brief 
+ * 
+ * @param str 
+ * @return true 
+ * @return false 
+ */
+bool string_validate_int(const char *str){
+    while (*str) {
+        if(!isdigit(*str)){
+            return false;
+        }
+        str++;
+    }
+    return true;
+}
+
 #if defined(__XC8)
 /**
  * @brief Función que calcula valor de precarga de timer0 para generar un timeout vía la bandera de interrupción por desborde (TMR0IF).
