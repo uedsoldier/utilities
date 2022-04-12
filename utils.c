@@ -364,7 +364,7 @@ bool string_validate_int(const char *str){
 }
 
 /**
- * @brief 
+ * @brief Función para validar que una cadena de caracteres corresponde a una secuencia de dígitos hexadecimales (0-9 y a-f)
  * 
  * @param str 
  * @return true 
