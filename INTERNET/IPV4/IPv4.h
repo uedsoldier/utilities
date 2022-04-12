@@ -15,6 +15,11 @@
 #define IPV4_LOG 1
 #endif
 
+/**
+ * @brief 
+ * 
+ */
+#define IPV4_MAX_SIZE    16
 
 #define IPV4_BYTE_COUNT     4
 #define IPV4_STRING_SEPARATOR   '.'

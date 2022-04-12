@@ -265,6 +265,7 @@ void whole_frac_init(whole_frac_t *dato);		// Inicialización de estructura de d
 // Manejo de cadenas
 int16_t string_indexOf( const char *cadena_a_buscar, const char *cadena_principal);
 bool string_validate_int(const char *str);
+bool string_validate_hex(const char *str);
 
 
 /**

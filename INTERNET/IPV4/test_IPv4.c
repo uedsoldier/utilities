@@ -6,7 +6,7 @@
 #define IP_TEST 0xC0A80019
 IPV4_address_t ip;
 
-uint8_t ip_array[] = {192,168,1,160};
+uint8_t ip_array[] = {200,25,1,67};
 
 int main(int argc, char *argv[]){
 
