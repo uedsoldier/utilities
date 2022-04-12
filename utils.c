@@ -348,8 +348,7 @@ int16_t string_indexOf( const char *cadena_a_buscar, const char *cadena_principa
 }   
 
 /**
- * @brief 
- * 
+ * @brief Función para validar que una cadena de caracteres corresponde a una secuencia de dígitos
  * @param str 
  * @return true 
  * @return false 
@@ -357,6 +356,23 @@ int16_t string_indexOf( const char *cadena_a_buscar, const char *cadena_principa
 bool string_validate_int(const char *str){
     while (*str) {
         if(!isdigit(*str)){
+            return false;
+        }
+        str++;
+    }
+    return true;
+}
+
+/**
+ * @brief Función para validar que una cadena de caracteres corresponde a una secuencia de dígitos hexadecimales (0-9 y a-f)
+ * 
+ * @param str 
+ * @return true 
+ * @return false 
+ */
+bool string_validate_hex(const char *str) {
+    while (*str) {
+        if(!isxdigit(*str)){
             return false;
         }
         str++;

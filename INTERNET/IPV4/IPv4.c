@@ -9,7 +9,7 @@
  */
 IPV4_error_t IPV4_fromArray(IPV4_address_t *address, uint8_t *bytes){
     uint8_t j = 0;
-    for(uint8_t i = IPV4_BYTE_COUNT-1; i != 0; i--){
+    for(int8_t i = IPV4_BYTE_COUNT-1; i != -1; i--){
         address->ipv4_addr_array[j++] = bytes[i];
     }
     return IPV4_ADDRESS_OK;
@@ -38,8 +38,8 @@ void array_fromIPV4(IPV4_address_t *address, uint8_t *bytes){
  * @return IPV4_error_t 
  */
 IPV4_error_t IPV4_fromString(IPV4_address_t *address, const char *string){
-    char _str[20];
-    memset(_str,0,sizeof(_str));
+    char _str[IPV4_MAX_SIZE];                              // Arreglo de almacenamiento de datos
+    memset(_str,0,sizeof(_str));                    
     memcpy(_str,string,strlen(string));
     if(_str == NULL){
         return IPV4_NULL_STRING;
