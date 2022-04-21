@@ -8,10 +8,19 @@
  * @return IPV4_error_t 
  */
 IPV4_error_t IPV4_fromArray(IPV4_address_t *address, uint8_t *bytes){
+    #if IPV4_LOG
+    printf("IPv4 from array: ");
+    #endif
     uint8_t j = 0;
     for(int8_t i = IPV4_BYTE_COUNT-1; i != -1; i--){
         address->ipv4_addr_array[j++] = bytes[i];
+        #if IPV4_LOG
+        printf("%u%c",address->ipv4_addr_array[i],(i!=IPV4_BYTE_COUNT-1)? IPV4_STRING_SEPARATOR:' '); 
+        #endif
     }
+    #if IPV4_LOG
+    printf("\n");
+    #endif
     return IPV4_ADDRESS_OK;
     
 }
@@ -22,8 +31,14 @@ IPV4_error_t IPV4_fromArray(IPV4_address_t *address, uint8_t *bytes){
  * @param bytes
  */
 void array_fromIPV4(IPV4_address_t *address, uint8_t *bytes){
+    #if IPV4_LOG
+    printf("Array from IPv4: ");
+    #endif
     for(uint8_t i = 0; i != IPV4_BYTE_COUNT; i++){
         bytes[i] = address->ipv4_addr_array[i];
+        #if IPV4_LOG
+        printf("%x%c",bytes[i],(i!=IPV4_BYTE_COUNT-1)? IPV4_STRING_SEPARATOR:' '); 
+        #endif
     }
     #if IPV4_LOG
     printf("\n");
@@ -80,7 +95,7 @@ IPV4_error_t IPV4_fromString(IPV4_address_t *address, const char *string){
  * @return 
  */
 char *string_fromIPV4(IPV4_address_t *address){
-    static char retString[20];
+    static char retString[IPV4_MAX_SIZE];
     sprintf(retString,"%u%c%u%c%u%c%u",address->ipv4_bytes.b3,IPV4_STRING_SEPARATOR,address->ipv4_bytes.b2,IPV4_STRING_SEPARATOR,address->ipv4_bytes.b1,IPV4_STRING_SEPARATOR,address->ipv4_bytes.b0);
     return retString;
 }
@@ -91,7 +106,7 @@ char *string_fromIPV4(IPV4_address_t *address){
  * @return 
  */
 char *IPV4_string_fromInt(uint32_t ip_int){
-    static char retString[20];
+    static char retString[IPV4_MAX_SIZE];
     sprintf(retString,"%u%c%u%c%u%c%u",(uint8_t)((ip_int & 0xFF000000UL)>>24),IPV4_STRING_SEPARATOR,(uint8_t)((ip_int & 0xFF0000UL)>>16),IPV4_STRING_SEPARATOR,(uint8_t)((ip_int & 0xFF00UL)>>8),IPV4_STRING_SEPARATOR,(uint8_t)((ip_int) & 0xFFUL),IPV4_STRING_SEPARATOR);
     return retString;
 }
