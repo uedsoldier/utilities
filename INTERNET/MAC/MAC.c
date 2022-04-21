@@ -60,7 +60,7 @@ MAC_error_t MAC_fromString(MAC_address_t *address, char *string){
         if(!string_validate_hex(ptr)){
             return MAC_NaN;
         }
-        num = strtol(ptr,NULL,16);     //atoi(ptr);
+        num = strtol(ptr,NULL,16);     
         if(num >= 0 && num <= 255){
             ptr = strtok(NULL,":");
             if(ptr != NULL){

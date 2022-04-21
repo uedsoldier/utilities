@@ -10,7 +10,10 @@
 /**
  * @brief Macro para activar o desactivar logging por puerto serie
  */
+#ifndef MAC_LOG
 #define	MAC_LOG	0
+#endif
+
 
 
 #define MAC_LOWERCASE false
