@@ -81,50 +81,8 @@ IPV6_error_t IPV6_fromString(IPV6_address_t *address, const char *string){
  */
 char *string_fromIPV6(IPV6_address_t *address, bool upper){
     static char retString[IPV6_MAX_SIZE];
-    sprintf(retString, upper? "%X%c%X%c%X%c%X%c%X%c%X%c%X%c%X":"%x%c%x%c%x%c%x%c%x%c%x%c%x%c%x",address->ipv6_words.w7,IPV6_STRING_SEPARATOR,address->ipv6_words.w6,IPV6_STRING_SEPARATOR,address->ipv6_words.w5,IPV6_STRING_SEPARATOR,address->ipv6_words.w4,IPV6_STRING_SEPARATOR,address->ipv6_words.w3,IPV6_STRING_SEPARATOR,address->ipv6_words.w2,IPV6_STRING_SEPARATOR,address->ipv6_words.w1,IPV6_STRING_SEPARATOR,address->ipv6_words.w0);
+    sprintf(retString, upper? "%04X%c%04X%c%04X%c%04X%c%04X%c%04X%c%04X%c%04X":"%04x%c%04x%c%04x%c%04x%c%04x%c%04x%c%04x%c%04x",address->ipv6_words.w7,IPV6_STRING_SEPARATOR,address->ipv6_words.w6,IPV6_STRING_SEPARATOR,address->ipv6_words.w5,IPV6_STRING_SEPARATOR,address->ipv6_words.w4,IPV6_STRING_SEPARATOR,address->ipv6_words.w3,IPV6_STRING_SEPARATOR,address->ipv6_words.w2,IPV6_STRING_SEPARATOR,address->ipv6_words.w1,IPV6_STRING_SEPARATOR,address->ipv6_words.w0);
     return retString;
-}
-
-/**
- * 
- * @param ip_int
- * @return 
- */
-char *IPV6_string_fromInt(uint32_t ip_int){
-    static char retString[40];
-    #if IPV6_LOG
-    printf("Make IPv6 string from int: ");
-    #endif
-    sprintf(retString,"%x%c%x%c%x%c%x",(uint8_t)((ip_int & 0xFF000000UL)>>24),(uint8_t)((ip_int & 0xFF0000UL)>>16),(uint8_t)((ip_int & 0xFF00UL)>>8),(uint8_t)((ip_int) & 0xFFUL));
-    #if IPV6_LOG
-    printf("%s\n",retString);
-    #endif
-    return retString;
-}
-
-/**
- * 
- * @param mask
- * @return 
- */
-bool IPV6_validMask(IPV6_address_t *subnetmask){
-    uint32_t mask = subnetmask->ipv6_word;
-    if (mask == 0) return true;
-    if (mask & (~mask >> 1)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-
-/**
- * 
- * @param address
- * @return 
- */
-uint32_t IPV6_int_fromIPV6(IPV6_address_t *address){
-    return address->ipv6_word;
 }
 
 /**

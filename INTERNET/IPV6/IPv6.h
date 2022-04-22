@@ -51,9 +51,6 @@ IPV6_error_t IPV6_fromArray(IPV6_address_t *address, uint16_t *words);
 void array_fromIPV6(IPV6_address_t *address, uint16_t *words);
 IPV6_error_t IPV6_fromString(IPV6_address_t *address, const char *string);
 char *string_fromIPV6(IPV6_address_t *address, bool upper);
-bool IPV6_validMask(IPV6_address_t *subnetmask);//!
-uint32_t IPV6_int_fromIPV6(IPV6_address_t *address);//!
-char *IPV6_string_fromInt(uint32_t ip_int);//!
 void IPV6_copy(IPV6_address_t *dest, IPV6_address_t *src);
 bool IPV6_compare(IPV6_address_t *a1, IPV6_address_t *a2 );
 
