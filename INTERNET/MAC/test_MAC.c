@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 
     if (argc != 2)
     {
-        printf("Se requiere un argumento");
+        printf("A MAC argument is required");
         return EXIT_FAILURE;
     }
     MAC_error_t error = MAC_fromString(&mac, argv[1]);
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     switch (error)
     {
     case MAC_ADDRESS_OK:
-        printf("MAC valida");
+        printf("Valid MAC\n");
         printf("String from that MAC: %s\n",string_fromMAC(&mac,false));
 
         MAC_fromArray(&mac,mac_array);

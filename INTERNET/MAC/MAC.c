@@ -7,7 +7,7 @@
  */
 MAC_error_t MAC_fromArray(MAC_address_t *address, uint8_t *bytes){
     uint8_t j = 0;
-    for(int8_t i = MAC_BYTE_COUNT-1; i != -1; i--){
+    for(int8_t i = MAC_SIZE_BYTES-1; i != -1; i--){
         address->MAC_array[j++] = bytes[i];
         
     }
@@ -23,10 +23,10 @@ void array_fromMAC(MAC_address_t *address, uint8_t *bytes){
     #ifdef MAC_LOG
     printf("\tArray from MAC: ");
     #endif
-    for(uint8_t i = 0; i != MAC_BYTE_COUNT; i++){
+    for(uint8_t i = 0; i != MAC_SIZE_BYTES; i++){
         bytes[i] = address->MAC_array[i];
         #ifdef MAC_LOG
-        printf("%02X%c",bytes[i],(i!=MAC_BYTE_COUNT-1)? ':':' '); 
+        printf("%02X%c",bytes[i],(i!=MAC_SIZE_BYTES-1)? ':':' '); 
         #endif
     }
     #ifdef MAC_LOG
@@ -50,7 +50,7 @@ MAC_error_t MAC_fromString(MAC_address_t *address, char *string){
         return MAC_NULL_STRING;
     }
     char *ptr;
-    uint8_t index = MAC_BYTE_COUNT-1, colons = 0;
+    uint8_t index = MAC_SIZE_BYTES-1, colons = 0;
     uint16_t num;
     ptr = strtok(_str,":");
     if(ptr == NULL){
@@ -73,7 +73,7 @@ MAC_error_t MAC_fromString(MAC_address_t *address, char *string){
             return MAC_INVALID_NUMBER;
         }
     }
-    if(colons != MAC_BYTE_COUNT-1){
+    if(colons != MAC_SIZE_BYTES-1){
         return MAC_INVALID_ADDRESS;
     }
     return MAC_ADDRESS_OK;

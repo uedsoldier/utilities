@@ -1,3 +1,4 @@
+
 #include "IPv4.h"
 
 /**
@@ -144,10 +145,13 @@ void IPV4_copy(IPV4_address_t *dest, IPV4_address_t *src ){
 }
 
 /**
- * @param *a1
- * @param *a2
- * @return 
+ * @brief 
+ * 
+ * @param address1 
+ * @param address2 
+ * @return true 
+ * @return false 
  */
-bool IPV4_compare(IPV4_address_t *a1, IPV4_address_t *a2 ){
-    return a1->ipv4_word == a2->ipv4_word;
+bool IPV4_compare(IPV4_address_t *address1, IPV4_address_t *address2 ){
+    return address1->ipv4_word == address2->ipv4_word;
 }

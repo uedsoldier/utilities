@@ -18,6 +18,7 @@
 #include <stddef.h>
 #include <ctype.h>
 
+#pragma region 8-bit PIC microcontroller specific macros
 #if defined (__XC)
 #include <xc.h>
 /**
@@ -64,7 +65,9 @@
 #pragma warning disable 751     // arithmetic overflow in constant expression
 
 #endif
+#pragma endregion
 
+#pragma region Bit manipulation macros
 /**
  * Macros para manejo individual de bits dentro variables. El parámetro bit indica la posición, que empieza
  * desde el bit 0 y el último bit será 7 (1 byte), 15 (2 bytes) o 31(4 bytes)
@@ -144,7 +147,9 @@
  * @return (void)
 */
 #define togglebit32(var,b) (((uint32_t)var)^=(0x00000001UL<<((uint8_t)b)))	
+#pragma endregion
 
+#pragma region Byte manipulation macros
 /**
  * @brief Macro para obtención de bytes que componen a una variable de 2 bytes o más. El Byte 0 es el menos significativo, 
  * mientras que el más significativo puede ser el Byte 1 (variable de 16 bits) o el Byte 3 (variable de 32 bits).
@@ -188,11 +193,9 @@
 	(byte & 0x04 ? '1' : '0'), \
 	(byte & 0x02 ? '1' : '0'), \
 	(byte & 0x01 ? '1' : '0') 
+#pragma endregion
 
-/**
- * Macros y estructuras de datos para operaciones matemáticas
-*/
-
+#pragma region Macros and data structures for math operations
 /**
  * @brief Macro para restricción de valores a límites inferior y superior (constrain)
  */
@@ -205,14 +208,11 @@ typedef struct whole_frac_t {
 	int16_t whole;
     int16_t frac;
 } whole_frac_t;
+#pragma endregion
 
-/**
- * Macros y funciones para utilización con arreglos
-*/
-
+#pragma region Macros and functions for arrays
 bool array_compare(const void *array1, const void *array2, size_t len);
 bool array_isAllZeros(const void *array, size_t len);
-
 
 /**
  * @brief Macro que devuelve la cantidad de bytes en un arreglo. Se divide el número de bytes
@@ -221,13 +221,14 @@ bool array_isAllZeros(const void *array, size_t len);
  * @return Tamaño del arreglo en bytes
 */
 #define array_length(array)	(sizeof(array)/sizeof(array[0]))
+#pragma endregion
 
 /**
  * Prototipos de funciones
 */
-
+#pragma region Function prototypes
 //Función de retardo en milisegundos
-void delay_ms(uint16_t milisegundos);
+void delay_ms(uint16_t ms);
 
 //Manejo de datos a nivel bit o byte
 
@@ -295,5 +296,7 @@ void millisecond_counter_reset();
 
 volatile static uint32_t milliseconds_count;
 #endif
+#pragma endregion
+
 
 #endif /*UTILS_H*/

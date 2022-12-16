@@ -11,7 +11,7 @@ uint8_t ip_array[] = {200,25,1,67};
 int main(int argc, char *argv[]){
 
     if(argc != 2){
-        printf("Se requiere un argumento");
+        printf("IPV4 argument is required");
         return EXIT_FAILURE;
     }
     if( IPV4_fromString(&ip,argv[1]) == IPV4_ADDRESS_OK){

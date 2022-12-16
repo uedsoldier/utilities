@@ -1,13 +1,16 @@
 #ifndef IPV4_H
 #define IPV4_H
 
+#pragma region Dependencies
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include "../../utils.h"
+#pragma endregion
 
+#pragma region Useful macros
 /**
  * @brief 
  */
@@ -25,7 +28,9 @@
 #define IPV4_STRING_SEPARATOR   '.'
 
 #define IPV4_ADDRESS_NONE   0x00000000
+#pragma endregion
 
+#pragma region Custom types
 /**
 * @brief Definición de estructura de datos para direccionamiento IPv4
 */
@@ -44,7 +49,9 @@ typedef union IPV4_address {
 typedef enum IPV4_error {
     IPV4_NULL_STRING, IPV4_NULL_TOKEN, IPV4_NaN, IPV4_INVALID_NUMBER, IPV4_INVALID_ADDRESS, IPV4_INVALID_ARRAY_LENGTH ,IPV4_ADDRESS_OK
 } IPV4_error_t;
+#pragma endregion
 
+#pragma region Function prototypes
 IPV4_error_t IPV4_fromArray(IPV4_address_t *address, uint8_t *bytes);
 void array_fromIPV4(IPV4_address_t *address, uint8_t *bytes);
 IPV4_error_t IPV4_fromString(IPV4_address_t *address, const char *string);
@@ -53,6 +60,7 @@ bool IPV4_validMask(IPV4_address_t *subnetmask);
 uint32_t IPV4_int_fromIPv4(IPV4_address_t *address);
 char *IPV4_string_fromInt(uint32_t ip_int);
 void IPV4_copy(IPV4_address_t *dest, IPV4_address_t *src );
-bool IPV4_compare(IPV4_address_t *a1, IPV4_address_t *a2 );
+bool IPV4_compare(IPV4_address_t *address1, IPV4_address_t *address2 );
+#pragma endregion
 
 #endif /* IPV4_H */

@@ -355,10 +355,9 @@ int16_t string_indexOf( const char *cadena_a_buscar, const char *cadena_principa
  */
 bool string_validate_int(const char *str){
     while (*str) {
-        if(!isdigit(*str)){
+        if(!isdigit(*str++)){
             return false;
         }
-        str++;
     }
     return true;
 }
@@ -372,10 +371,9 @@ bool string_validate_int(const char *str){
  */
 bool string_validate_hex(const char *str) {
     while (*str) {
-        if(!isxdigit(*str)){
+        if(!isxdigit(*str++)){
             return false;
         }
-        str++;
     }
     return true;
 }
