@@ -5,13 +5,13 @@
 
 IPV6_address_t ip;
 
-const char *ipv6 = "f6c9:c787:d12f::62c3:089a:70c4:a7c7";
+const char *ipv6 = "f6c9:c787:d12f:0:0:089a:70c4:a7c7";
 uint16_t ip_array[] = {0xAABB, 0x0000, 0x9336, 0xbc78, 0xae00, 0x0ef5, 0x1550, 0x74fa };
 
 int main(int argc, char *argv[]){
     if (argc != 2)
     {
-        printf("Se requiere un argumento");
+        printf("A IPv6 argument is required");
         return EXIT_FAILURE;
     }
 

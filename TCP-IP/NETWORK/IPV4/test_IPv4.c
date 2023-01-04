@@ -6,7 +6,7 @@
 #define IP_TEST 0xC0A80019
 IPV4_address_t ip;
 
-uint8_t ip_array[] = {200,25,1,67};
+uint8_t ip_array[] = {100,101,102,103};
 
 int main(int argc, char *argv[]){
 
@@ -15,10 +15,11 @@ int main(int argc, char *argv[]){
         return EXIT_FAILURE;
     }
     if( IPV4_fromString(&ip,argv[1]) == IPV4_ADDRESS_OK){
+        printf("Valid IP\n");
         uint32_t ip_int = IPV4_int_fromIPv4(&ip);
         printf("IP from string: %s\n",string_fromIPV4(&ip));
     } else{
-        printf("IP invalida");
+        printf("Invalid IP ");
         return EXIT_FAILURE;
     }
 

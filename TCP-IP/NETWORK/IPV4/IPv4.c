@@ -15,11 +15,14 @@ IPV4_error_t IPV4_fromArray(IPV4_address_t *address, uint8_t *bytes){
     uint8_t j = 0;
     for(int8_t i = IPV4_BYTE_COUNT-1; i != -1; i--){
         address->ipv4_addr_array[j++] = bytes[i];
-        #if IPV4_LOG
-        printf("%u%c",address->ipv4_addr_array[i],(i!=IPV4_BYTE_COUNT-1)? IPV4_STRING_SEPARATOR:' '); 
-        #endif
+        
     }
+
     #if IPV4_LOG
+    for (int8_t i = (IPV4_BYTE_COUNT - 1); i != -1; i--)
+    {
+        printf("%u%c", address->ipv4_addr_array[i], (i != 0) ? IPV4_STRING_SEPARATOR : ' ');
+    }
     printf("\n");
     #endif
     return IPV4_ADDRESS_OK;
