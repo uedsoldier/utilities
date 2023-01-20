@@ -1,9 +1,9 @@
 /**
- * @file NeoTime.c
+ * @file time.c
  * @brief Librería para manejo de estructuras de datos de tiempo
  * @author Ing. José Roberto Parra Trewartha
 */
-#include "NeoTime.h"
+#include "time.h"
 
 /**
  * @brief Función para establecer año pivote. El año de pivote determina el rango de años con respecto al año de la época.
@@ -13,7 +13,7 @@
  * @return (void)
 */
 #ifdef TIME_EPOCH_MODIFIABLE
-void NeoTime_set_pivot_year( uint8_t py ) {
+void time_set_pivot_year( uint8_t py ) {
 	s_pivot_year = py;   
 }
 #endif
@@ -23,7 +23,7 @@ void NeoTime_set_pivot_year( uint8_t py ) {
  * @param tiempo (time_t*) Apuntador a estructura de datos de tiempo
  * @return (uint8_t) Dato de año pivote 
 */
-uint8_t NeoTime_get_pivot_year() {
+uint8_t time_get_pivot_year() {
 	return s_pivot_year; 
 }
 
@@ -34,7 +34,7 @@ uint8_t NeoTime_get_pivot_year() {
 	Valor de retorno:
 */
 #ifdef TIME_EPOCH_MODIFIABLE
-void NeoTime_set_epoch_weekday(uint8_t ew )  {
+void time_set_epoch_weekday(uint8_t ew )  {
 	s_epoch_weekday = ew; 
 }
 #endif
@@ -44,7 +44,7 @@ void NeoTime_set_epoch_weekday(uint8_t ew )  {
  * @param (void)
  * @return (uint8_t) Día base de la semana (0-6)
 */
-uint8_t NeoTime_get_epoch_weekday() {
+uint8_t time_get_epoch_weekday() {
 	return s_epoch_weekday;
 }
 
@@ -54,7 +54,7 @@ uint8_t NeoTime_get_epoch_weekday() {
  * @param eo (uint8_t) Offset de época
 */
 #ifdef TIME_EPOCH_MODIFIABLE
-void NeoTime_set_epoch_offset(uint8_t eo) {
+void time_set_epoch_offset(uint8_t eo) {
 	s_epoch_offset = eo;
 }
 #endif
@@ -64,7 +64,7 @@ void NeoTime_set_epoch_offset(uint8_t eo) {
  * @param tiempo (time_t*) Apuntador a estructura de datos de tiempo.
  * @return (uint8_t) Offset de época
 */
-uint8_t NeoTime_get_epoch_offset() {
+uint8_t time_get_epoch_offset() {
 	return s_epoch_offset;
 }
 
@@ -76,10 +76,10 @@ uint8_t NeoTime_get_epoch_offset() {
  * @param y (uint16_t) de época para establecer
  * @return
 */
-void NeoTime_set_epoch_year(uint16_t y) {
+void time_set_epoch_year(uint16_t y) {
 	s_epoch_year = y;
-	NeoTime_set_epoch_offset( s_epoch_year % 100 );
-	NeoTime_set_pivot_year( NeoTime_get_epoch_offset() );
+	time_set_epoch_offset( s_epoch_year % 100 );
+	time_set_pivot_year( time_get_epoch_offset() );
 }
 #endif
 
@@ -88,7 +88,7 @@ void NeoTime_set_epoch_year(uint16_t y) {
  * @param (void)
  * @return (uint16_t) Año inicial de época.
 */
-uint16_t NeoTime_get_epoch_year() {
+uint16_t time_get_epoch_year() {
 	return s_epoch_year;
 }
 
@@ -97,8 +97,8 @@ uint16_t NeoTime_get_epoch_year() {
  * @param dayno (uint16_t) Número de día contado a partir del 1° de Enero del año época 
  * @return (uint8_t) Número de día de la semana (1..7) para el día especificado
 */
-uint8_t NeoTime_weekday_for(uint16_t dayno) {
-	return ((dayno+NeoTime_get_epoch_weekday()-1) % DAYS_PER_WEEK) + 1;
+uint8_t time_weekday_for(uint16_t dayno) {
+	return ((dayno+time_get_epoch_weekday()-1) % DAYS_PER_WEEK) + 1;
 }
 
 /**
@@ -106,9 +106,9 @@ uint8_t NeoTime_weekday_for(uint16_t dayno) {
  * @param tiempo (time_t*) Apuntador a estructura de datos de tiempo.
  * @return (bool) Verdadero si se tiene una fecha y hora válida
 */
-bool NeoTime_isValid(time_t *tiempo) {
+bool time_isValid(time_t *tiempo) {
 	return  ((tiempo->year <= 99) && (1 <= tiempo->month) && (tiempo->month <= 12) && ((1 <= tiempo->date) && ((tiempo->date <= days_in[tiempo->month]) || \
-            ((tiempo->month == 2) && NeoTime_isLeap(tiempo) && (tiempo->date == 29)))) && (tiempo->hours   <= 23) && (tiempo->minutes <= 59) && (tiempo->seconds <= 59));
+            ((tiempo->month == 2) && time_isLeap(tiempo) && (tiempo->date == 29)))) && (tiempo->hours   <= 23) && (tiempo->minutes <= 59) && (tiempo->seconds <= 59));
 }
 
 /**
@@ -116,7 +116,7 @@ bool NeoTime_isValid(time_t *tiempo) {
  * @param year (uint16_t) Año para determinar si es bisiesto
  * @return (bool) Verdadero si el año en cuestión es bisiesto.
 */
-bool NeoTime_isLeapFull(uint16_t year) {
+bool time_isLeapFull(uint16_t year) {
 	if ( year % 4 )	//Si el año no es divisible entre 4, no es bisiesto
 		return false;
 	//Si es divisible entre 4, se verifican las condiciones para determinar si un año es bisiesto:
@@ -133,11 +133,11 @@ bool NeoTime_isLeapFull(uint16_t year) {
  * @param tiempo (time_t*) Apuntador a estructura de datos de tiempo.
  * @return (uint16_t) Valor de año real
 */
-uint16_t NeoTime_fullYear(time_t *tiempo) {
+uint16_t time_fullYear(time_t *tiempo) {
 	uint16_t y = tiempo->year;
-	uint16_t epoch_year = NeoTime_get_epoch_year();
+	uint16_t epoch_year = time_get_epoch_year();
 
-    if (y < NeoTime_get_pivot_year())
+    if (y < time_get_pivot_year())
       y += 100 * (epoch_year/100 + 1);
     else
       y += 100 * (epoch_year/100);
@@ -149,8 +149,8 @@ uint16_t NeoTime_fullYear(time_t *tiempo) {
  * @param tiempo (time_t*) Apuntador a estructura de datos de tiempo.
  * @return (bool) Verdadero si el año en cuestión es bisiesto.
 */
-bool NeoTime_isLeap(time_t *tiempo) {
-	return NeoTime_isLeapFull(NeoTime_fullYear(tiempo));
+bool time_isLeap(time_t *tiempo) {
+	return time_isLeapFull(time_fullYear(tiempo));
 }
 
 /**
@@ -158,8 +158,8 @@ bool NeoTime_isLeap(time_t *tiempo) {
  * @param year (uint16_t) Año (4 dígitos).
  * @return (uint16_t) Número de días en ese año
 */
-uint16_t NeoTime_daysPer(uint16_t year) {
-	return (NeoTime_isLeapFull(year))? 366:365;
+uint16_t time_daysPer(uint16_t year) {
+	return (time_isLeapFull(year))? 366:365;
 }
 
 /**
@@ -169,22 +169,22 @@ uint16_t NeoTime_daysPer(uint16_t year) {
  * @return (void)
  * 
 */
-void NeoTime_get_real_time(time_t *tiempo, clock_t c) {
+void time_get_real_time(time_t *tiempo, clock_t c) {
 	uint16_t dayno = c / SECONDS_PER_DAY;
 	c -= dayno * (uint32_t)SECONDS_PER_DAY;
-	tiempo->day = NeoTime_weekday_for(dayno);		//Cálculo de número de día
+	tiempo->day = time_weekday_for(dayno);		//Cálculo de número de día
 
-	uint16_t y = NeoTime_get_epoch_year();			//Obtención de año época (año base o 0)
+	uint16_t y = time_get_epoch_year();			//Obtención de año época (año base o 0)
 	for (;;) {
-		uint16_t days = NeoTime_daysPer( y );
+		uint16_t days = time_daysPer( y );
 		if (dayno < days)
 			break;
 		dayno -= days;
 		y++;
 	}
-  	bool leap_year = NeoTime_isLeapFull(y);			//Bandera de año bisiesto
-	y -= NeoTime_get_epoch_year();
-	y += NeoTime_get_epoch_offset();
+  	bool leap_year = time_isLeapFull(y);			//Bandera de año bisiesto
+	y -= time_get_epoch_year();
+	y += time_get_epoch_offset();
 	while (y > 100)
 		y -= 100;
 	tiempo->year = y;						//Asignación de año con respecto al base
@@ -220,9 +220,9 @@ void NeoTime_get_real_time(time_t *tiempo, clock_t c) {
  * @param tiempo (time_t*) Apuntador a estructura de datos de tiempo.
  * @return (uint16_t) Número de día del año
 */
-uint16_t NeoTime_dayOfYear(time_t *tiempo) {
+uint16_t time_dayOfYear(time_t *tiempo) {
 	uint16_t dayno = tiempo->date - 1;		
-	bool leap_year = NeoTime_isLeap(tiempo);	//Determina si es año bisiesto
+	bool leap_year = time_isLeap(tiempo);	//Determina si es año bisiesto
     uint8_t mes = tiempo->month;
 	for (uint8_t m = 1; m != mes; m++)
 	{
@@ -239,12 +239,12 @@ uint16_t NeoTime_dayOfYear(time_t *tiempo) {
  * @param tiempo (time_t*) Apuntador a estructura de datos de tiempo.
  * @return (uint16_t) Cantidad de días transcurridos desde año época
 */
-uint16_t NeoTime_getDays(time_t *tiempo) {
-	uint16_t day_count = NeoTime_dayOfYear(tiempo);
+uint16_t time_getDays(time_t *tiempo) {
+	uint16_t day_count = time_dayOfYear(tiempo);
 
-	uint16_t y = NeoTime_fullYear(tiempo);
-	while (y-- != NeoTime_get_epoch_year())
-		day_count += NeoTime_daysPer(y);
+	uint16_t y = time_fullYear(tiempo);
+	while (y-- != time_get_epoch_year())
+		day_count += time_daysPer(y);
 	return day_count;
 }
 
@@ -253,8 +253,8 @@ uint16_t NeoTime_getDays(time_t *tiempo) {
  * @param tiempo (time_t*) Apuntador a estructura de datos de tiempo.
  * @return (clock_t) Tiempo UTC
 */
-clock_t NeoTime_get_raw_time(time_t *tiempo) {
-	clock_t c = NeoTime_getDays(tiempo) * SECONDS_PER_DAY;
+clock_t time_get_raw_time(time_t *tiempo) {
+	clock_t c = time_getDays(tiempo) * SECONDS_PER_DAY;
 	uint8_t hours = tiempo->hours;
 	if(hours < 18)
 		c += hours * (uint16_t) SECONDS_PER_HOUR;
@@ -271,14 +271,14 @@ clock_t NeoTime_get_raw_time(time_t *tiempo) {
  * @param tiempo (time_t*) Apuntador a estructura de datos de tiempo.
  * @return (void)
 */
-void NeoTime_init(time_t *tiempo) {
+void time_init(time_t *tiempo) {
 	tiempo->seconds = 0;
 	tiempo->hours = 0;
 	tiempo->minutes = 0;
 	tiempo->date = 1;
 	tiempo->month = 1;
-	tiempo->year = NeoTime_get_epoch_year() % 100;
-	tiempo->day = NeoTime_get_epoch_weekday();
+	tiempo->year = time_get_epoch_year() % 100;
+	tiempo->day = time_get_epoch_weekday();
 
 }
 
@@ -288,12 +288,12 @@ void NeoTime_init(time_t *tiempo) {
  * @param tiempo (time_t*) Apuntador a estructura de datos de tiempo.
  * @return (void)
 */
-void NeoTime_setDay(time_t *tiempo) {
-	tiempo->day = NeoTime_weekday_for(NeoTime_getDays(tiempo));
+void time_setDay(time_t *tiempo) {
+	tiempo->day = time_weekday_for(time_getDays(tiempo));
 }
 
 #ifdef TIME_EPOCH_MODIFIABLE
-void NeoTime_use_fastest_epoch() {
+void time_use_fastest_epoch() {
 	// Averigua cuándo fuimos compilados y usamos el año para una época muy rápida. Formato "MMM DD AAAA"
 	const char* compile_date = (const char *)(__DATE__);
 	uint16_t    compile_year = 0;
@@ -301,17 +301,17 @@ void NeoTime_use_fastest_epoch() {
 		compile_year = compile_year*10 + compile_date[i] - '0';
 
 	// Establece temporalmente una época Y2K para que podamos determinar el día del 1 de enero de este año.
-	NeoTime_set_epoch_year      ( Y2K_EPOCH_YEAR );
-	NeoTime_set_epoch_weekday   ( Y2K_EPOCH_WEEKDAY );
+	time_set_epoch_year      ( Y2K_EPOCH_YEAR );
+	time_set_epoch_weekday   ( Y2K_EPOCH_WEEKDAY );
 
 	time_t this_year;
 	this_year.year = compile_year % 100;
-	NeoTime_setDay(&this_year);
+	time_setDay(&this_year);
 	uint8_t compile_weekday = this_year.day;
 
-	NeoTime_set_epoch_year   ( compile_year );
-	NeoTime_set_epoch_weekday( compile_weekday );
-	NeoTime_set_pivot_year   ( this_year.year );
+	time_set_epoch_year   ( compile_year );
+	time_set_epoch_weekday( compile_weekday );
+	time_set_pivot_year   ( this_year.year );
 }
 #endif
 
@@ -320,18 +320,18 @@ void NeoTime_use_fastest_epoch() {
  * @param raw_time
  * @param compensation_gmt
  */
-void NeoTime_GMT_compensation(clock_t *raw_time, int8_t compensation_gmt){
-    int32_t compensation_seconds = (int32_t)compensation_gmt * SECONDS_PER_HOUR;
-    #ifdef NEOTIME_LOG
+void time_GMT_compensation(clock_t *raw_time, UTC_timezone_t compensation_gmt)
+{
+	int32_t compensation_seconds = (int32_t)compensation_gmt * SECONDS_PER_HOUR;
+    #ifdef TIME_LOG
     printf("GMT %d. Compensation in seconds: %ld\r\n",compensation_gmt,compensation_seconds);
     #endif
     *raw_time += compensation_seconds;
     
-    #ifdef NEOTIME_LOG
+    #ifdef TIME_LOG
     printf("New NTP time: %lu\r\n",*raw_time);
     #endif
 }
-
 
 /**
  * @brief Función para separar los parámetros de tiempo a partir de una cadena de caracteres
@@ -339,7 +339,7 @@ void NeoTime_GMT_compensation(clock_t *raw_time, int8_t compensation_gmt){
  * @param tiempo (time_t*) Apuntador a estructura de datos de tiempo.
  * @return (bool) Verdadero si hubo éxito
 */
-bool NeoTime_parse(const char* s, time_t *tiempo) {
+bool time_parse(const char* s, time_t *tiempo) {
 	char buf[32];
 	strcpy(buf, s);
 	char* sp = &buf[0];
@@ -347,7 +347,7 @@ bool NeoTime_parse(const char* s, time_t *tiempo) {
 
 	if (*sp != '-') return false;
 	tiempo->year = value % 100;
-	if (NeoTime_fullYear(tiempo) != value) return false;
+	if (time_fullYear(tiempo) != value) return false;
 
 	value = strtoul(sp + 1, &sp, 10);
 	if (*sp != '-') return false;
@@ -369,16 +369,16 @@ bool NeoTime_parse(const char* s, time_t *tiempo) {
 	if (*sp != 0) return false;
 	tiempo->seconds = value;
 
-	return (NeoTime_isValid(tiempo));
+	return (time_isValid(tiempo));
 }
 
-#ifdef NEOTIME_LOG
+#ifdef TIME_LOG
 /**
  * 
  * @param tiempo
  * @return 
  */
-bool NeoTime_print(time_t *tiempo){
+bool time_print(time_t *tiempo){
     uint16_t year = tiempo->year;
     uint8_t  month = tiempo->month;
     uint8_t  date = tiempo->date;
@@ -387,7 +387,7 @@ bool NeoTime_print(time_t *tiempo){
     uint8_t  minutes = tiempo->minutes;
     uint8_t  seconds = tiempo->seconds;
     printf("%s %u-%02u-%02u %02u:%02u:%02u\r\n",day_name_str_P[day],date,month,year,hours,minutes,seconds);
-    bool valid = NeoTime_isValid(tiempo);
+    bool valid = time_isValid(tiempo);
     printf("%s\r\n",valid? "Valid time":"Invalid time");
     return valid;
 }

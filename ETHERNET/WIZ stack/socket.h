@@ -21,8 +21,7 @@ extern "C"
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include "../NETWORK/IPV4/IPv4.h"
-#include "wizchip_conf.h"
+#include "../../INTERNET/IPV4/IPv4.h"
 #pragma endregion
 
 #pragma region Useful macros
@@ -30,7 +29,7 @@ extern "C"
  * @brief
  *
  */
-#define socket_t uint8_t
+#define SOCKET uint8_t
 
 /**
  * @brief
@@ -119,8 +118,8 @@ extern "C"
     } socket_error_t;
 
     /**
-     * @brief
-     * TODO
+     * @brief 
+     * TODO 
      */
     typedef enum socket_protocol
     {
@@ -135,9 +134,9 @@ extern "C"
      */
     typedef enum socket_flag
     {
-        SF_ETHER_OWN = (Sn_MR_MFEN),     ///< In @ref Sn_MR_MACRAW, Receive only the packet as broadcast, multicast and own packet
-        SF_IGMP_VER2 = (Sn_MR_MC),       ///< In @ref Sn_MR_UDP with \ref SF_MULTI_ENABLE, Select IGMP version 2.
-        SF_TCP_NODELAY = (Sn_MR_ND),     ///< In @ref Sn_MR_TCP, Use to nodelayed ack.
+        SF_ETHER_OWN = (Sn_MR_MFEN),    ///< In @ref Sn_MR_MACRAW, Receive only the packet as broadcast, multicast and own packet
+        SF_IGMP_VER2 = (Sn_MR_MC),      ///< In @ref Sn_MR_UDP with \ref SF_MULTI_ENABLE, Select IGMP version 2.
+        SF_TCP_NODELAY = (Sn_MR_ND),    ///< In @ref Sn_MR_TCP, Use to nodelayed ack.
         SF_MULTI_ENABLE = (Sn_MR_MULTI), ///< In @ref Sn_MR_UDP, Enable multicast mode.
 
 #if _WIZCHIP_ == 5500
