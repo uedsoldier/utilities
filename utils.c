@@ -117,8 +117,8 @@ uint32_t bit_invert_Int32(uint32_t dato_original) {
     uint32_t dato_invertido = 0;
     for(uint8_t i=0 ; i != 32; i++)
     {
-        if ( (dato_original & (1<<i)) != 0)
-            dato_invertido|= (1 << (31-i));
+        if ( (dato_original & (1UL<<i)) != 0)
+            dato_invertido|= (1UL << (31-i));
     }
     return dato_invertido;
 }
